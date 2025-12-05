@@ -6,7 +6,21 @@
     <title>{{ title }}</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        /* 这里是动态生成的CSS */
+        /* 默认 GitHub 风格深色主题变量（可被 {{ css }} 覆盖） */
+        :root{
+            --gh-bg: #0d1117;
+            --gh-surface: #0b1220;
+            --gh-text: #c9d1d9;
+            --gh-border: #30363d;
+            --gh-primary: #58a6ff;
+        }
+        html, body { background: var(--gh-bg); color: var(--gh-text); }
+        /* 禁用动画 */
+        * { animation: none !important; transition: none !important; }
+        /* 卡片直角 */
+        .card, .feature-card, .editor-container, .preview-container, .content-element { border-radius: 0 !important; box-shadow: none !important; border: 1px solid var(--gh-border) !important; background: var(--gh-surface) !important; }
+
+        /* 动态生成的CSS */
         {{ css }}
     </style>
 </head>

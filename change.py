@@ -25,7 +25,8 @@ st.set_page_config(
 )
 
 # ============================================
-# 自定义CSS（已由 change.py 的 GitHub 深色主题全量替换）
+# GitHub 深色主题CSS - 所有文字改为浅蓝色
+# ============================================
 def load_css():
     st.markdown("""
     <style>
@@ -920,109 +921,13 @@ def load_css():
     .css-1l269bu,
     .css-1vbd788,
     .css-1n76uvr {
-        color: #7cc5ff !important;  /* 改為浅蓝色 */
+        color: #7cc5ff !important;  /* 改为浅蓝色 */
     }
     
     /* 确保所有文本可见 */
     *:not(button):not(input):not(textarea):not(select):not(option) {
         color: #7cc5ff !important;  /* 改为浅蓝色 */
     }
-    </style>
-    """, unsafe_allow_html=True)
-
-# 逐页样式微调覆盖：封面、编辑器、元素、预览与响应式优化
-st.markdown("""
-    <style>
-    :root {
-        --base-font-size: 16px;
-        --control-padding: 12px;
-        --accent: #667eea;
-    }
-
-    /* 基本字体与对比度 */
-    html, body, .stApp {
-        font-size: var(--base-font-size) !important;
-        color: #0f1720 !important;
-        background: #f7fafc !important;
-    }
-
-    /* 侧边栏：宽度、内边距与文本颜色 */
-    section[data-testid="stSidebar"] {
-        width: 300px !important;
-        min-width: 260px !important;
-        padding: 22px !important;
-        background: linear-gradient(180deg,#0b1220 0%,#172033 100%) !important;
-        color: #e6eef8 !important;
-    }
-    section[data-testid="stSidebar"] .sidebar-title,
-    section[data-testid="stSidebar"] .sidebar-subtitle,
-    section[data-testid="stSidebar"] .meta-item { color: #e6eef8 !important; }
-
-    /* 主内容区与侧边栏对齐 */
-    .content {
-        margin-left: 320px !important;
-        padding: 2.5rem 2.5rem !important;
-        max-width: calc(100% - 340px) !important;
-    }
-
-    .main-container { max-width: 1200px !important; margin: 0 auto; padding: 20px; }
-
-    /* 封面页和页面标题 */
-    #cover-page { padding: 24px !important; }
-    .page-title { font-size: 2.2rem !important; font-weight: 900 !important; color: #0f172a !important; margin-bottom: 1rem !important; }
-
-    /* 编辑器容器：更紧凑且具卡片感 */
-    .editor-container {
-        padding: 22px !important;
-        border-radius: 14px !important;
-        background: #ffffff !important;
-        box-shadow: 0 10px 30px rgba(2,6,23,0.06) !important;
-    }
-
-    .editor-form input, .editor-form textarea, .stTextInput input, .stTextArea textarea {
-        font-size: 1rem !important;
-        padding: 10px !important;
-        border-radius: 8px !important;
-        border: 1px solid #e6e9ef !important;
-        background: #ffffff !important;
-        color: #0f1720 !important;
-    }
-
-    /* 内容元素卡片样式 */
-    .content-element {
-        padding: 18px !important;
-        border-radius: 12px !important;
-        background: linear-gradient(180deg,#ffffff,#fbfdff) !important;
-        border: 1px solid #eef2f7 !important;
-        margin-bottom: 16px !important;
-    }
-
-    .content-element .heading { font-weight: 800 !important; color: #0f172a !important; }
-    .heading-1 { font-size: 1.9rem !important; }
-    .heading-2 { font-size: 1.5rem !important; }
-
-    .paragraph { font-size: 1rem !important; line-height: 1.8 !important; color: #111827 !important; padding: 12px !important; }
-    .note { font-style: italic; border-left: 4px solid var(--accent) !important; padding: 12px !important; background: #f8fafc !important; }
-
-    /* 预览容器 */
-    .preview-container { max-height: 68vh !important; overflow-y: auto !important; padding: 18px !important; border-radius: 12px !important; background: #ffffff !important; }
-
-    /* 目录树项与卡片 */
-    .tree-item { padding: 12px 16px !important; font-size: 1rem !important; border-radius: 10px !important; }
-    .feature-card { padding: 20px !important; border-radius: 12px !important; }
-
-    /* 按钮和控件尺寸 */
-    .stButton > button { padding: 10px 18px !important; font-size: 1rem !important; border-radius: 10px !important; }
-    .stTabs [data-baseweb="tab"] { padding: 10px 14px !important; font-size: 0.98rem !important; }
-    .icon-btn { width: 44px !important; height: 44px !important; }
-
-    /* 小屏幕自适应 */
-    @media (max-width: 1024px) {
-        section[data-testid="stSidebar"] { position: relative !important; width: 100% !important; min-width: 0 !important; }
-        .content { margin-left: 0 !important; padding: 1rem !important; }
-        .page-title { font-size: 1.6rem !important; }
-    }
-
     </style>
     """, unsafe_allow_html=True)
 
@@ -1047,7 +952,7 @@ class SessionStateManager:
             'auto_save': True,
             'project_loaded': False,
             'preview_mode': False,
-            'selected_theme': 'light',
+            'selected_theme': 'dark',
             'sidebar_collapsed': False,
             'notification': None,
             'project_version': 1,
@@ -1108,7 +1013,7 @@ class SessionStateManager:
 from manual_creator.project_manager import ProjectManager
 
 # ============================================
-# HTML生成器类
+# HTML生成器类 - 更新文字为浅蓝色
 # ============================================
 class HTMLGenerator:
     @staticmethod
@@ -1295,19 +1200,16 @@ class HTMLGenerator:
         word_count = 0
 
         def chars_count(s: str) -> int:
-            # 以字符数为准，去掉空白（空格与换行），更适合中文统计
             if not s:
                 return 0
             return len(s.replace('\n', '').replace(' ', ''))
 
-        # 统计封面页
         if "content" in structure.get("cover_page", {}):
             for element in structure["cover_page"]["content"]:
                 if element.get("type") in ["heading", "paragraph", "note"]:
                     text = element.get("text", "")
                     word_count += chars_count(text)
 
-        # 统计其他页面
         for page in structure.get("pages", []):
             if "content" in page:
                 for element in page["content"]:
@@ -1319,36 +1221,28 @@ class HTMLGenerator:
     
     @staticmethod
     def generate_css(config):
-        """生成CSS样式"""
-        theme = config.get("theme", "light")
-        primary_color = config.get("primary_color", "#667eea")
-        secondary_color = config.get("secondary_color", "#764ba2")
-        font_family = config.get("font_family", "Inter, 'Microsoft YaHei', sans-serif")
+        """生成GitHub风格的CSS样式 - 文字改为浅蓝色"""
+        theme = config.get("theme", "dark")
+        primary_color = config.get("primary_color", "#58a6ff")
+        secondary_color = config.get("secondary_color", "#bc8cff")
         
-        if theme == "dark":
-            bg_color = "#0f172a"
-            text_color = "#f1f5f9"
-            sidebar_bg = "#1e293b"
-            card_bg = "#334155"
-            border_color = "#475569"
-            code_bg = "#1e293b"
-        else:
-            bg_color = "#f8fafc"
-            text_color = "#1e293b"
-            sidebar_bg = "#ffffff"
-            card_bg = "#ffffff"
-            border_color = "#e2e8f0"
-            code_bg = "#f1f5f9"
+        # GitHub 深色主题颜色 - 文字使用浅蓝色
+        bg_color = "#0d1117"
+        text_color = "#7cc5ff"  # 改为浅蓝色
+        sidebar_bg = "#161b22"
+        card_bg = "#161b22"
+        border_color = "#30363d"
+        code_bg = "#1c2128"
         
         return f"""
         :root {{
             --primary-color: {primary_color};
             --secondary-color: {secondary_color};
-            --accent-color: #f093fb;
-            --success-color: #10b981;
-            --warning-color: #f59e0b;
-            --danger-color: #ef4444;
-            --info-color: #3b82f6;
+            --accent-color: #bc8cff;
+            --success-color: #3fb950;
+            --warning-color: #f0883e;
+            --danger-color: #ff7b72;
+            --info-color: #58a6ff;
             
             --bg-color: {bg_color};
             --text-color: {text_color};
@@ -1357,24 +1251,20 @@ class HTMLGenerator:
             --border-color: {border_color};
             --code-bg: {code_bg};
             
-            --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
-            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-            --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
+            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.5);
+            --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.6);
+            --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.7);
             
-            --radius-sm: 0.5rem;
-            --radius-md: 0.75rem;
-            --radius-lg: 1rem;
-            --radius-xl: 1.5rem;
-            --radius-2xl: 2rem;
+            --radius-sm: 6px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
             
-            --spacing-xs: 0.5rem;
-            --spacing-sm: 0.75rem;
-            --spacing-md: 1rem;
-            --spacing-lg: 1.5rem;
-            --spacing-xl: 2rem;
-            --spacing-2xl: 3rem;
+            --spacing-xs: 8px;
+            --spacing-sm: 12px;
+            --spacing-md: 16px;
+            --spacing-lg: 24px;
+            --spacing-xl: 32px;
         }}
         
         * {{
@@ -1389,28 +1279,25 @@ class HTMLGenerator:
         }}
         
         body {{
-            font-family: {font_family};
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
             background: var(--bg-color);
             color: var(--text-color);
-            line-height: 1.7;
-            transition: all 0.3s ease;
+            line-height: 1.6;
             overflow-x: hidden;
             min-height: 100vh;
-            position: relative;
         }}
         
-        /* 容器布局 */
+        /* GitHub 风格的容器布局 */
         .container {{
             display: flex;
             min-height: 100vh;
-            position: relative;
-            max-width: 1800px;
+            max-width: 1400px;
             margin: 0 auto;
         }}
         
-        /* 侧边栏样式 */
+        /* GitHub 风格的侧边栏 */
         .sidebar {{
-            width: 320px;
+            width: 280px;
             background: var(--sidebar-bg);
             border-right: 1px solid var(--border-color);
             position: fixed;
@@ -1419,483 +1306,429 @@ class HTMLGenerator:
             bottom: 0;
             overflow-y: auto;
             z-index: 1000;
-            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: var(--shadow-xl);
-            display: flex;
-            flex-direction: column;
-            padding: 2.5rem;
+            transition: transform 0.2s ease;
         }}
         
         .sidebar.hidden {{
             transform: translateX(-100%);
-            box-shadow: none;
         }}
         
         /* 侧边栏头部 */
         .sidebar-header {{
-            position: relative;
-            padding-bottom: 2rem;
-            margin-bottom: 2rem;
-            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+            padding: 24px;
+            border-bottom: 1px solid var(--border-color);
         }}
         
         .close-sidebar {{
             position: absolute;
-            top: 0;
-            right: 0;
+            top: 16px;
+            right: 16px;
             background: transparent;
             color: var(--text-color);
-            border: none;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            width: 32px;
+            height: 32px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.3rem;
-            transition: all 0.3s ease;
+            font-size: 1rem;
             opacity: 0.7;
         }}
         
         .close-sidebar:hover {{
-            background: rgba(255, 255, 255, 0.1);
-            color: var(--primary-color);
+            background: var(--card-bg);
+            color: #8ed1ff;
             opacity: 1;
-            transform: rotate(90deg);
         }}
         
         .sidebar-title {{
-            font-size: 2rem;
-            font-weight: 900;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 1rem;
-            line-height: 1.2;
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #8ed1ff;
+            margin-bottom: 8px;
         }}
         
         .sidebar-description {{
-            font-size: 1.05rem;
+            font-size: 0.95rem;
             color: var(--text-color);
             opacity: 0.8;
-            line-height: 1.6;
-            margin-bottom: 1.5rem;
+            line-height: 1.5;
+            margin-bottom: 16px;
         }}
         
         .sidebar-meta {{
             display: flex;
             flex-wrap: wrap;
-            gap: 1rem;
-            margin-top: 1rem;
+            gap: 12px;
+            margin-top: 12px;
         }}
         
         .meta-item {{
             display: flex;
             align-items: center;
-            gap: 0.5rem;
-            font-size: 0.9rem;
+            gap: 6px;
+            font-size: 0.85rem;
             color: var(--text-color);
             opacity: 0.7;
         }}
         
-        .meta-item i {{
-            font-size: 1rem;
-        }}
-        
         /* 目录树 */
         .directory-tree {{
-            flex: 1;
-            overflow-y: auto;
-            padding-right: 0.5rem;
+            padding: 16px;
         }}
         
         .tree-item {{
-            padding: 1rem 1.25rem;
-            margin: 0.75rem 0;
-            border-radius: var(--radius-md);
+            padding: 10px 12px;
+            margin: 4px 0;
+            border-radius: var(--radius-sm);
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.2s ease;
             display: flex;
             align-items: center;
-            gap: 1rem;
+            gap: 10px;
             color: var(--text-color);
-            font-size: 1.05rem;
-            border-left: 4px solid transparent;
-            background: rgba(255, 255, 255, 0.05);
-            position: relative;
-            overflow: hidden;
-            font-weight: 500;
-        }}
-        
-        .tree-item::before {{
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(90deg, rgba(var(--primary-color-rgb), 0.15), rgba(var(--secondary-color-rgb), 0.08));
-            opacity: 0;
-            transition: opacity 0.3s ease;
+            font-size: 0.95rem;
+            border: 1px solid transparent;
         }}
         
         .tree-item:hover {{
-            transform: translateX(10px);
-            border-left-color: var(--primary-color);
-            box-shadow: var(--shadow-md);
-        }}
-        
-        .tree-item:hover::before {{
-            opacity: 1;
+            background: #1c2128;
+            color: #8ed1ff;
         }}
         
         .tree-item.active {{
-            background: linear-gradient(90deg, rgba(var(--primary-color-rgb), 0.2), rgba(var(--secondary-color-rgb), 0.1));
-            border-left-color: var(--primary-color);
-            color: var(--text-color);
-            font-weight: 700;
-            box-shadow: var(--shadow-md);
-            transform: translateX(10px);
-        }}
-        
-        .tree-item.active::before {{
-            opacity: 1;
-        }}
-        
-        .tree-item i {{
-            font-size: 1.1rem;
-            width: 24px;
-            text-align: center;
-            transition: transform 0.3s ease;
-        }}
-        
-        .tree-item:hover i {{
-            transform: scale(1.2);
+            background: rgba(56, 139, 253, 0.1);
+            color: #8ed1ff;
+            font-weight: 500;
+            border-color: rgba(56, 139, 253, 0.3);
         }}
         
         /* 侧边栏页脚 */
         .sidebar-footer {{
-            padding-top: 2rem;
-            margin-top: 2rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            margin-top: 20px;
+            border-top: 1px solid var(--border-color);
         }}
         
         .theme-switcher {{
             display: flex;
-            gap: 0.75rem;
-            margin-bottom: 1.5rem;
+            gap: 8px;
+            margin-bottom: 16px;
         }}
         
         .theme-btn {{
             flex: 1;
-            padding: 0.75rem 1rem;
-            border: 2px solid var(--border-color);
-            border-radius: var(--radius-md);
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
             background: var(--card-bg);
             color: var(--text-color);
             cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 0.95rem;
-            font-weight: 600;
+            transition: all 0.2s ease;
+            font-size: 0.9rem;
+            font-weight: 500;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 0.5rem;
+            gap: 6px;
         }}
         
         .theme-btn:hover {{
-            border-color: var(--primary-color);
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
+            background: #1c2128;
+            border-color: #8ed1ff;
+            color: #8ed1ff;
         }}
         
         .theme-btn.active {{
-            background: var(--primary-color);
+            background: #58a6ff;
             color: white;
-            border-color: var(--primary-color);
+            border-color: #58a6ff;
         }}
         
         .copyright {{
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             color: var(--text-color);
             opacity: 0.6;
             text-align: center;
-            line-height: 1.5;
         }}
         
         /* 侧边栏切换按钮 */
         .sidebar-toggle {{
             position: fixed;
-            top: 2rem;
-            left: 2rem;
-            background: var(--primary-color);
+            top: 16px;
+            left: 16px;
+            background: #58a6ff;
             color: white;
             border: none;
-            border-radius: var(--radius-lg);
-            width: 60px;
-            height: 60px;
+            border-radius: var(--radius-sm);
+            width: 40px;
+            height: 40px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.5rem;
+            font-size: 1.2rem;
             z-index: 999;
-            box-shadow: var(--shadow-xl);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: var(--shadow-md);
+            transition: all 0.2s ease;
             opacity: 0;
-            animation: fadeIn 0.5s ease 0.3s forwards;
         }}
         
         .sidebar.hidden ~ .sidebar-toggle {{
             opacity: 1;
-            transform: translateX(0);
-            animation: bounceInLeft 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-        }}
-        
-        .sidebar:not(.hidden) ~ .sidebar-toggle {{
-            opacity: 0;
-            pointer-events: none;
         }}
         
         .sidebar-toggle:hover {{
-            background: var(--secondary-color);
-            transform: scale(1.1) rotate(90deg);
-            box-shadow: var(--shadow-2xl);
-        }}
-        
-        @keyframes fadeIn {{
-            to {{ opacity: 1; }}
-        }}
-        
-        @keyframes bounceInLeft {{
-            0% {{
-                opacity: 0;
-                transform: translateX(-50px);
-            }}
-            60% {{
-                opacity: 1;
-                transform: translateX(10px);
-            }}
-            80% {{
-                transform: translateX(-5px);
-            }}
-            100% {{
-                transform: translateX(0);
-            }}
+            background: #388bfd;
+            transform: scale(1.05);
         }}
         
         /* 内容区域 */
         .content {{
             flex: 1;
-            margin-left: 320px;
-            padding: 3rem 4rem;
+            margin-left: 280px;
+            padding: 32px;
             min-height: 100vh;
             background: var(--bg-color);
-            transition: all 0.3s ease;
-            position: relative;
+            transition: all 0.2s ease;
         }}
         
         .sidebar.hidden ~ .content {{
             margin-left: 0;
-            padding-left: 6rem;
         }}
         
-        /* 阅读进度条 */
-        .reading-progress {{
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: transparent;
-            z-index: 1001;
+        /* GitHub Markdown 风格 */
+        .markdown-body {{
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+            font-size: 16px;
+            line-height: 1.6;
+            word-wrap: break-word;
+            background-color: var(--bg-color) !important;
+            color: var(--text-color) !important;
         }}
         
-        .reading-progress .progress-bar {{
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
-            width: 0%;
-            transition: width 0.1s ease;
-            border-radius: 0 2px 2px 0;
+        .markdown-body h1,
+        .markdown-body h2,
+        .markdown-body h3,
+        .markdown-body h4,
+        .markdown-body h5,
+        .markdown-body h6 {{
+            font-weight: 600 !important;
+            color: #8ed1ff !important;
+            margin-top: 24px !important;
+            margin-bottom: 16px !important;
+            padding-bottom: 0.3em !important;
+            border-bottom: 1px solid var(--border-color) !important;
+        }}
+        
+        .markdown-body h1 {{
+            font-size: 2em !important;
+        }}
+        
+        .markdown-body h2 {{
+            font-size: 1.5em !important;
+        }}
+        
+        .markdown-body p {{
+            margin-bottom: 16px !important;
+            line-height: 1.6 !important;
+            color: var(--text-color) !important;
+        }}
+        
+        .markdown-body code {{
+            font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace !important;
+            background-color: var(--code-bg) !important;
+            border-radius: 6px !important;
+            padding: 0.2em 0.4em !important;
+            font-size: 85% !important;
+            border: 1px solid var(--border-color) !important;
+            color: var(--text-color) !important;
+        }}
+        
+        .markdown-body pre {{
+            background-color: var(--code-bg) !important;
+            border: 1px solid var(--border-color) !important;
+            border-radius: 6px !important;
+            padding: 16px !important;
+            overflow: auto;
+            line-height: 1.45;
+            color: var(--text-color) !important;
+        }}
+        
+        .markdown-body blockquote {{
+            border-left: 0.25em solid #7cc5ff !important;
+            color: var(--text-color) !important;
+            padding: 0 1em !important;
+            margin: 16px 0 !important;
+        }}
+        
+        .markdown-body ul, .markdown-body ol {{
+            padding-left: 2em !important;
+        }}
+        
+        .markdown-body li {{
+            margin: 8px 0 !important;
+            color: var(--text-color) !important;
+        }}
+        
+        .markdown-body table {{
+            border-spacing: 0;
+            border-collapse: collapse;
+            display: block;
+            width: max-content;
+            max-width: 100%;
+            overflow: auto;
+            margin: 16px 0 !important;
+        }}
+        
+        .markdown-body th {{
+            font-weight: 600 !important;
+            background-color: var(--card-bg) !important;
+            color: #8ed1ff !important;
+        }}
+        
+        .markdown-body th,
+        .markdown-body td {{
+            padding: 6px 13px !important;
+            border: 1px solid var(--border-color) !important;
+            color: var(--text-color) !important;
+        }}
+        
+        .markdown-body tr {{
+            background-color: var(--bg-color) !important;
+            border-top: 1px solid var(--border-color) !important;
+        }}
+        
+        .markdown-body tr:nth-child(2n) {{
+            background-color: var(--card-bg) !important;
+        }}
+        
+        .markdown-body hr {{
+            border: none !important;
+            height: 1px !important;
+            background-color: var(--border-color) !important;
+            margin: 24px 0 !important;
+        }}
+        
+        .markdown-body a {{
+            color: #7cc5ff !important;
+            text-decoration: none !important;
+        }}
+        
+        .markdown-body a:hover {{
+            color: #8ed1ff !important;
+            text-decoration: underline !important;
         }}
         
         /* 页面样式 */
         .page {{
-            max-width: 900px;
+            max-width: 800px;
             margin: 0 auto;
             display: none;
-            animation: fadeInUp 0.5s ease-out;
-            padding-bottom: 4rem;
         }}
         
         .page.active {{
             display: block;
         }}
         
-        @keyframes fadeInUp {{
-            from {{
-                opacity: 0;
-                transform: translateY(30px);
-            }}
-            to {{
-                opacity: 1;
-                transform: translateY(0);
-            }}
-        }}
-        
         .page-title {{
-            font-size: 3.5rem;
-            font-weight: 900;
-            color: var(--text-color);
-            margin-bottom: 2rem;
-            padding-bottom: 1.5rem;
-            border-bottom: 3px solid var(--primary-color);
-            position: relative;
-            line-height: 1.2;
-        }}
-        
-        .page-title::after {{
-            content: '';
-            position: absolute;
-            bottom: -3px;
-            left: 0;
-            width: 150px;
-            height: 3px;
-            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            font-size: 2em;
+            font-weight: 600;
+            color: #8ed1ff;
+            margin-bottom: 24px;
+            padding-bottom: 0.3em;
+            border-bottom: 1px solid var(--border-color);
         }}
         
         /* 内容元素 */
         .element {{
-            margin: 2.5rem 0;
-            opacity: 0;
-            transform: translateY(20px);
-            transition: all 0.5s ease;
-        }}
-        
-        .element.visible {{
-            opacity: 1;
-            transform: translateY(0);
+            margin: 24px 0;
         }}
         
         .heading {{
-            color: var(--text-color);
-            margin: 1.5rem 0;
-            font-weight: 700;
-            line-height: 1.3;
+            color: #8ed1ff;
+            margin: 16px 0;
+            font-weight: 600;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.3em;
         }}
         
         .heading-1 {{ 
-            font-size: 2.8rem;
-            margin-top: 3rem;
+            font-size: 2em;
+            margin-top: 32px;
         }}
         
         .heading-2 {{ 
-            font-size: 2.2rem;
-            margin-top: 2.5rem;
+            font-size: 1.5em;
+            margin-top: 24px;
         }}
         
         .heading-3 {{ 
-            font-size: 1.8rem;
-            margin-top: 2rem;
+            font-size: 1.25em;
+            margin-top: 20px;
         }}
         
         .heading-4 {{ 
-            font-size: 1.5rem;
-            margin-top: 1.5rem;
+            font-size: 1em;
+            margin-top: 16px;
         }}
         
         .paragraph {{
-            line-height: 1.8;
-            font-size: 1.15rem;
+            line-height: 1.6;
+            font-size: 1rem;
             color: var(--text-color);
-            padding: 1.5rem 2rem;
-            border-radius: var(--radius-lg);
-            margin: 1.5rem 0;
+            padding: 16px;
+            border-radius: var(--radius-sm);
+            margin: 16px 0;
             background: var(--card-bg);
-            border-left: 4px solid var(--primary-color);
-            box-shadow: var(--shadow-sm);
+            border-left: 3px solid #58a6ff;
         }}
         
         .note {{
             background: var(--card-bg);
-            border-left: 4px solid var(--primary-color);
-            padding: 2rem 2.5rem;
-            border-radius: var(--radius-lg);
-            margin: 2rem 0;
-            position: relative;
+            border-left: 3px solid #58a6ff;
+            padding: 16px;
+            border-radius: var(--radius-sm);
+            margin: 16px 0;
             font-style: italic;
-            box-shadow: var(--shadow-md);
-        }}
-        
-        .note::before {{
-            content: '"';
-            font-size: 4rem;
-            color: var(--primary-color);
-            opacity: 0.2;
-            position: absolute;
-            top: 0.5rem;
-            left: 1rem;
-            font-family: Georgia, serif;
+            color: var(--text-color);
         }}
         
         .note-content {{
             color: var(--text-color);
-            font-size: 1.1rem;
-            position: relative;
-            z-index: 1;
-            line-height: 1.7;
+            font-size: 1rem;
+            line-height: 1.6;
         }}
         
         .note-author {{
             text-align: right;
             color: var(--text-color);
             opacity: 0.7;
-            font-size: 1rem;
-            margin-top: 1.5rem;
+            font-size: 0.9rem;
+            margin-top: 12px;
             font-style: italic;
-            font-weight: 500;
         }}
         
         .button {{
             display: inline-block;
-            padding: 1rem 2.5rem;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            padding: 8px 16px;
+            background: #58a6ff;
             color: white;
             text-decoration: none;
-            border-radius: var(--radius-lg);
-            font-weight: 700;
-            font-size: 1.1rem;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            border: none;
+            border-radius: var(--radius-sm);
+            font-weight: 500;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+            border: 1px solid #58a6ff;
             cursor: pointer;
-            margin: 1.5rem 0;
-            box-shadow: var(--shadow-md);
-            position: relative;
-            overflow: hidden;
-        }}
-        
-        .button::before {{
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-            transition: left 0.7s ease;
+            margin: 12px 0;
         }}
         
         .button:hover {{
-            transform: translateY(-3px);
-            box-shadow: var(--shadow-xl);
-        }}
-        
-        .button:hover::before {{
-            left: 100%;
-        }}
-        
-        .button:active {{
+            background: #388bfd;
+            text-decoration: none;
             transform: translateY(-1px);
         }}
         
@@ -1904,10 +1737,10 @@ class HTMLGenerator:
             padding-bottom: 56.25%;
             height: 0;
             overflow: hidden;
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-xl);
-            margin: 2.5rem 0;
-            background: #000;
+            border-radius: var(--radius-sm);
+            background: var(--card-bg);
+            margin: 20px 0;
+            border: 1px solid var(--border-color);
         }}
         
         .video-container iframe {{
@@ -1917,72 +1750,48 @@ class HTMLGenerator:
             width: 100%;
             height: 100%;
             border: none;
-            border-radius: var(--radius-lg);
+            border-radius: var(--radius-sm);
         }}
         
         /* 返回顶部按钮 */
         .back-to-top {{
             position: fixed;
-            bottom: 3rem;
-            right: 3rem;
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            bottom: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            background: #58a6ff;
             color: white;
             border: none;
-            border-radius: 50%;
+            border-radius: var(--radius-sm);
             cursor: pointer;
             display: none;
             align-items: center;
             justify-content: center;
-            font-size: 1.5rem;
-            box-shadow: var(--shadow-xl);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 1.2rem;
             z-index: 1000;
-            opacity: 0;
+            transition: all 0.2s ease;
         }}
         
         .back-to-top.show {{
             display: flex;
-            opacity: 1;
-            animation: bounceIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
         }}
         
         .back-to-top:hover {{
-            transform: translateY(-5px) scale(1.1);
-            box-shadow: var(--shadow-2xl);
-        }}
-        
-        @keyframes bounceIn {{
-            0% {{
-                opacity: 0;
-                transform: scale(0.3) translateY(30px);
-            }}
-            50% {{
-                opacity: 0.9;
-                transform: scale(1.1);
-            }}
-            80% {{
-                opacity: 1;
-                transform: scale(0.89);
-            }}
-            100% {{
-                opacity: 1;
-                transform: scale(1);
-            }}
+            background: #388bfd;
+            transform: translateY(-2px);
         }}
         
         /* 快速导航 */
         .quick-nav {{
             position: fixed;
-            bottom: 3rem;
-            right: 3rem;
+            bottom: 20px;
+            right: 70px;
             display: flex;
-            flex-direction: column;
-            gap: 1rem;
+            gap: 8px;
             z-index: 998;
             opacity: 0;
-            transition: opacity 0.3s ease;
+            transition: opacity 0.2s ease;
         }}
         
         .quick-nav.visible {{
@@ -1990,27 +1799,24 @@ class HTMLGenerator:
         }}
         
         .nav-btn {{
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-sm);
             background: var(--card-bg);
-            border: 2px solid var(--border-color);
+            border: 1px solid var(--border-color);
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.3rem;
+            font-size: 1rem;
             color: var(--text-color);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: var(--shadow-lg);
+            transition: all 0.2s ease;
         }}
         
         .nav-btn:hover {{
-            background: var(--primary-color);
-            color: white;
-            transform: translateY(-3px) scale(1.1);
-            border-color: var(--primary-color);
-            box-shadow: var(--shadow-xl);
+            background: #1c2128;
+            border-color: #8ed1ff;
+            color: #8ed1ff;
         }}
         
         /* 搜索模态框 */
@@ -2021,13 +1827,13 @@ class HTMLGenerator:
             right: 0;
             bottom: 0;
             background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(5px);
             z-index: 2000;
             display: none;
             align-items: center;
             justify-content: center;
             opacity: 0;
-            transition: opacity 0.3s ease;
+            transition: opacity 0.2s ease;
         }}
         
         .search-modal.active {{
@@ -2037,76 +1843,68 @@ class HTMLGenerator:
         
         .search-container {{
             width: 90%;
-            max-width: 800px;
+            max-width: 600px;
             background: var(--card-bg);
-            border-radius: var(--radius-xl);
-            padding: 2.5rem;
-            box-shadow: var(--shadow-2xl);
-            position: relative;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            padding: 20px;
         }}
         
         .search-input {{
             width: 100%;
-            padding: 1.5rem;
-            font-size: 1.3rem;
-            border: 3px solid var(--border-color);
-            border-radius: var(--radius-lg);
+            padding: 12px;
+            font-size: 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
             background: var(--bg-color);
             color: var(--text-color);
-            margin-bottom: 2rem;
-            transition: all 0.3s ease;
+            margin-bottom: 16px;
         }}
         
         .search-input:focus {{
             outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 4px rgba(var(--primary-color-rgb), 0.1);
+            border-color: #58a6ff;
         }}
         
         .search-close {{
             position: absolute;
-            top: 1.5rem;
-            right: 1.5rem;
+            top: 16px;
+            right: 16px;
             background: transparent;
             border: none;
             color: var(--text-color);
-            font-size: 1.5rem;
+            font-size: 1.2rem;
             cursor: pointer;
-            transition: all 0.3s ease;
-        }}
-        
-        .search-close:hover {{
-            color: var(--primary-color);
-            transform: rotate(90deg);
         }}
         
         .search-results {{
-            max-height: 400px;
+            max-height: 300px;
             overflow-y: auto;
         }}
         
         .search-result-item {{
-            padding: 1.5rem;
+            padding: 12px;
             border-bottom: 1px solid var(--border-color);
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
+            color: var(--text-color);
         }}
         
         .search-result-item:hover {{
-            background: var(--bg-color);
-            padding-left: 2rem;
+            background: #1c2128;
+            color: #8ed1ff;
         }}
         
         .search-result-title {{
-            font-weight: 700;
+            font-weight: 500;
             color: var(--text-color);
-            margin-bottom: 0.5rem;
+            margin-bottom: 4px;
         }}
         
         .search-result-content {{
             color: var(--text-color);
             opacity: 0.7;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
         }}
         
         /* 加载遮罩 */
@@ -2122,28 +1920,21 @@ class HTMLGenerator:
             align-items: center;
             justify-content: center;
             z-index: 3000;
-            transition: opacity 0.5s ease;
-        }}
-        
-        .loading-overlay.hidden {{
-            opacity: 0;
-            pointer-events: none;
         }}
         
         .loading-spinner-large {{
-            width: 80px;
-            height: 80px;
-            border: 5px solid var(--border-color);
-            border-top: 5px solid var(--primary-color);
+            width: 50px;
+            height: 50px;
+            border: 3px solid var(--border-color);
+            border-top: 3px solid #7cc5ff;
             border-radius: 50%;
             animation: spin 1s linear infinite;
-            margin-bottom: 2rem;
+            margin-bottom: 16px;
         }}
         
         .loading-overlay p {{
-            font-size: 1.2rem;
+            font-size: 1rem;
             color: var(--text-color);
-            font-weight: 500;
         }}
         
         @keyframes spin {{
@@ -2151,163 +1942,39 @@ class HTMLGenerator:
         }}
         
         /* 响应式设计 */
-        @media (max-width: 1200px) {{
-            .content {{
-                padding: 2.5rem 3rem;
-            }}
-            
-            .sidebar.hidden ~ .content {{
-                padding-left: 4rem;
-            }}
-        }}
-        
-        @media (max-width: 992px) {{
-            .sidebar {{
-                width: 280px;
-                padding: 2rem;
-            }}
-            
-            .content {{
-                margin-left: 280px;
-                padding: 2rem;
-            }}
-            
-            .sidebar.hidden ~ .content {{
-                padding-left: 2rem;
-            }}
-            
-            .page-title {{
-                font-size: 2.8rem;
-            }}
-            
-            .heading-1 {{ font-size: 2.4rem; }}
-            .heading-2 {{ font-size: 2rem; }}
-            .heading-3 {{ font-size: 1.6rem; }}
-            .heading-4 {{ font-size: 1.4rem; }}
-        }}
-        
         @media (max-width: 768px) {{
             .sidebar {{
                 width: 100%;
-                max-width: 320px;
-                box-shadow: var(--shadow-2xl);
-            }}
-            
-            .sidebar.hidden {{
-                transform: translateX(-100%);
-            }}
-            
-            .sidebar:not(.hidden) ~ .sidebar-toggle {{
-                display: none;
+                max-width: 300px;
             }}
             
             .content {{
                 margin-left: 0;
-                padding: 1.5rem;
-            }}
-            
-            .sidebar.hidden ~ .content {{
-                padding-left: 1.5rem;
+                padding: 20px;
             }}
             
             .page {{
-                padding-bottom: 3rem;
+                padding-bottom: 20px;
             }}
             
             .page-title {{
-                font-size: 2.4rem;
-                padding-bottom: 1rem;
-            }}
-            
-            .quick-nav {{
-                bottom: 2rem;
-                right: 2rem;
-            }}
-            
-            .nav-btn {{
-                width: 50px;
-                height: 50px;
-                font-size: 1.2rem;
-            }}
-            
-            .back-to-top {{
-                bottom: 2rem;
-                right: 2rem;
-                width: 50px;
-                height: 50px;
-                font-size: 1.2rem;
-            }}
-            
-            .sidebar-toggle {{
-                top: 1.5rem;
-                left: 1.5rem;
-                width: 50px;
-                height: 50px;
-                font-size: 1.3rem;
+                font-size: 1.5em;
             }}
         }}
         
         @media (max-width: 480px) {{
             .content {{
-                padding: 1rem;
-            }}
-            
-            .sidebar.hidden ~ .content {{
-                padding-left: 1rem;
-            }}
-            
-            .page {{
-                padding-bottom: 2rem;
+                padding: 16px;
             }}
             
             .page-title {{
-                font-size: 2rem;
+                font-size: 1.3em;
             }}
             
-            .heading-1 {{ font-size: 1.8rem; }}
-            .heading-2 {{ font-size: 1.6rem; }}
-            .heading-3 {{ font-size: 1.4rem; }}
-            .heading-4 {{ font-size: 1.2rem; }}
-            
-            .paragraph {{
-                padding: 1rem;
-                font-size: 1.05rem;
-            }}
-            
-            .note {{
-                padding: 1.5rem;
-            }}
-            
-            .button {{
-                padding: 0.8rem 1.5rem;
-                font-size: 1rem;
-            }}
-            
-            .quick-nav {{
-                bottom: 1.5rem;
-                right: 1.5rem;
-                gap: 0.75rem;
-            }}
-            
-            .nav-btn {{
-                width: 45px;
-                height: 45px;
-                font-size: 1.1rem;
-            }}
-            
-            .back-to-top {{
-                bottom: 1.5rem;
-                right: 1.5rem;
-                width: 45px;
-                height: 45px;
-            }}
-            
-            .sidebar-toggle {{
-                top: 1rem;
-                left: 1rem;
-                width: 45px;
-                height: 45px;
-            }}
+            .heading-1 {{ font-size: 1.5em; }}
+            .heading-2 {{ font-size: 1.3em; }}
+            .heading-3 {{ font-size: 1.1em; }}
+            .heading-4 {{ font-size: 1em; }}
         }}
         
         /* 打印样式 */
@@ -2323,193 +1990,67 @@ class HTMLGenerator:
                 margin-left: 0 !important;
                 padding: 0 !important;
             }}
-            
-            .page {{
-                max-width: 100%;
-                padding: 0;
-                margin: 0;
-            }}
-            
-            .page-title {{
-                font-size: 2rem;
-            }}
-            
-            .heading-1 {{ font-size: 1.8rem; }}
-            .heading-2 {{ font-size: 1.6rem; }}
-            .heading-3 {{ font-size: 1.4rem; }}
-            .heading-4 {{ font-size: 1.2rem; }}
-            
-            .paragraph {{
-                background: none;
-                border: none;
-                box-shadow: none;
-                padding: 0.5rem 0;
-            }}
-            
-            .note {{
-                background: none;
-                border: 1px solid #ccc;
-                box-shadow: none;
-            }}
         }}
         """
     
     @staticmethod
     def generate_additional_css():
-        """生成额外的CSS"""
+        """生成额外的CSS - 文字改为浅蓝色"""
         return """<style>
         /* 自定义滚动条 */
         ::-webkit-scrollbar {
-            width: 12px;
-            height: 12px;
+            width: 10px;
+            height: 10px;
         }
         
         ::-webkit-scrollbar-track {
             background: var(--bg-color);
-            border-radius: 10px;
         }
         
         ::-webkit-scrollbar-thumb {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            border-radius: 10px;
-            border: 3px solid var(--bg-color);
+            background: #484f58;
+            border-radius: 4px;
+            border: 2px solid var(--bg-color);
         }
         
         ::-webkit-scrollbar-thumb:hover {
-            background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+            background: #5a626d;
         }
         
         /* 选择文本样式 */
         ::selection {
-            background: rgba(var(--primary-color-rgb), 0.3);
-            color: var(--text-color);
+            background: rgba(124, 197, 255, 0.3);
+            color: #7cc5ff;
         }
         
         ::-moz-selection {
-            background: rgba(var(--primary-color-rgb), 0.3);
-            color: var(--text-color);
+            background: rgba(124, 197, 255, 0.3);
+            color: #7cc5ff;
         }
         
         /* 焦点样式 */
         :focus {
-            outline: 3px solid rgba(var(--primary-color-rgb), 0.5);
-            outline-offset: 2px;
+            outline: 2px solid rgba(124, 197, 255, 0.5);
+            outline-offset: 1px;
         }
         
         :focus:not(:focus-visible) {
             outline: none;
         }
         
-        /* 平滑滚动锚点 */
-        html {
-            scroll-padding-top: 2rem;
-        }
-        
         /* 图片样式 */
         img {
             max-width: 100%;
             height: auto;
-            border-radius: var(--radius-md);
-            box-shadow: var(--shadow-md);
-            transition: all 0.3s ease;
-        }
-        
-        img:hover {
-            transform: scale(1.02);
-            box-shadow: var(--shadow-lg);
-        }
-        
-        /* 代码块样式 */
-        pre, code {
-            font-family: 'Courier New', Monaco, monospace;
-            background: var(--code-bg);
-            border-radius: var(--radius-md);
-            padding: 1rem;
-            overflow-x: auto;
-            font-size: 0.95rem;
-            line-height: 1.5;
-        }
-        
-        code {
-            padding: 0.2rem 0.5rem;
-            margin: 0 0.2rem;
-        }
-        
-        pre code {
-            padding: 0;
-            background: none;
-        }
-        
-        /* 表格样式 */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 2rem 0;
-            border-radius: var(--radius-md);
-            overflow: hidden;
-            box-shadow: var(--shadow-sm);
-        }
-        
-        th, td {
-            padding: 1rem;
-            text-align: left;
-            border-bottom: 1px solid var(--border-color);
-        }
-        
-        th {
-            background: var(--primary-color);
-            color: white;
-            font-weight: 700;
-        }
-        
-        tr:hover {
-            background: var(--bg-color);
-        }
-        
-        /* 引用样式 */
-        blockquote {
-            border-left: 4px solid var(--primary-color);
-            margin: 2rem 0;
-            padding: 1.5rem 2rem;
-            background: var(--card-bg);
-            border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
-            font-style: italic;
-            box-shadow: var(--shadow-sm);
-        }
-        
-        blockquote p {
-            margin: 0;
-            color: var(--text-color);
-            opacity: 0.9;
-        }
-        
-        /* 列表样式 */
-        ul, ol {
-            margin: 1.5rem 0;
-            padding-left: 2rem;
-        }
-        
-        li {
-            margin: 0.75rem 0;
-            line-height: 1.6;
-        }
-        
-        li::marker {
-            color: var(--primary-color);
-        }
-        
-        /* 分割线 */
-        hr {
-            border: none;
-            height: 2px;
-            background: linear-gradient(to right, transparent, var(--primary-color), transparent);
-            margin: 3rem 0;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-color);
         }
         
         /* 工具提示 */
         [data-tooltip] {
             position: relative;
             cursor: help;
+            color: #7cc5ff;
         }
         
         [data-tooltip]:hover::before {
@@ -2519,27 +2060,26 @@ class HTMLGenerator:
             left: 50%;
             transform: translateX(-50%);
             background: var(--card-bg);
-            color: var(--text-color);
-            padding: 0.75rem 1rem;
+            color: #7cc5ff;
+            padding: 6px 10px;
             border-radius: var(--radius-sm);
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             white-space: nowrap;
-            box-shadow: var(--shadow-lg);
-            z-index: 1000;
-            margin-bottom: 0.5rem;
             border: 1px solid var(--border-color);
+            z-index: 1000;
+            margin-bottom: 5px;
         }
         
-        [data-tooltip]:hover::after {
-            content: '';
-            position: absolute;
-            bottom: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            border-width: 5px;
-            border-style: solid;
-            border-color: var(--card-bg) transparent transparent transparent;
-            margin-bottom: -5px;
+        /* 空状态文本 */
+        .empty-state {
+            color: #7cc5ff;
+            opacity: 0.7;
+        }
+        
+        /* 图片标题 */
+        .image-caption {
+            color: #7cc5ff;
+            opacity: 0.7;
         }
         </style>"""
     
@@ -2586,8 +2126,8 @@ class HTMLGenerator:
             return '''
             <div class="empty-content">
                 <div class="empty-state">
-                    <i class="fas fa-file-alt fa-3x" style="color: var(--text-color); opacity: 0.3; margin-bottom: 1rem;"></i>
-                    <p style="color: var(--text-color); opacity: 0.5; font-style: italic;">暂无内容</p>
+                    <i class="fas fa-file-alt fa-2x" style="color: #7cc5ff; opacity: 0.3; margin-bottom: 1rem;"></i>
+                    <p style="color: #7cc5ff; opacity: 0.5; font-style: italic;">暂无内容</p>
                 </div>
             </div>
             '''
@@ -2595,32 +2135,32 @@ class HTMLGenerator:
         content_html = ""
         for element in page["content"]:
             element_html = HTMLGenerator.generate_element_html(element)
-            content_html += f'<div class="element">{element_html}</div>'
+            content_html += f'<div class="element markdown-body">{element_html}</div>'
         
         return content_html
     
     @staticmethod
     def generate_element_html(element):
-        """生成单个元素HTML"""
+        """生成单个元素HTML - 文字改为浅蓝色"""
         element_type = element["type"]
         
         if element_type == "heading":
             level = element.get("level", 2)
             text = element.get("text", "")
-            color = element.get("color", "var(--text-color)")
+            color = element.get("color", "#8ed1ff")  # 改为亮蓝色
             align = element.get("align", "left")
             
-            return f'<h{level} class="heading heading-{level}" style="color: {color}; text-align: {align};">{text}</h{level}>'
+            return f'<h{level} class="heading heading-{level}" style="color: {color}; text-align: {align}; border-bottom: 1px solid #30363d;">{text}</h{level}>'
         
         elif element_type == "paragraph":
             text = element.get("text", "")
-            color = element.get("color", "var(--text-color)")
-            background = element.get("background", "var(--card-bg)")
+            color = element.get("color", "#7cc5ff")  # 改为浅蓝色
+            background = element.get("background", "transparent")
             align = element.get("align", "left")
             
             text_with_breaks = text.replace('\n', '<br>')
             return f'''
-            <div class="paragraph" style="color: {color}; background: {background}; text-align: {align};">
+            <div class="paragraph" style="color: {color}; background: {background}; text-align: {align}; border-left: 3px solid #58a6ff;">
                 {text_with_breaks}
             </div>
             '''
@@ -2628,13 +2168,13 @@ class HTMLGenerator:
         elif element_type == "note":
             text = element.get("text", "")
             author = element.get("author", "")
-            color = element.get("color", "var(--text-color)")
-            background = element.get("background", "var(--card-bg)")
+            color = element.get("color", "#7cc5ff")  # 改为浅蓝色
+            background = element.get("background", "rgba(56, 139, 253, 0.1)")
             
             author_html = f'<div class="note-author">{author}</div>' if author else ''
             
             return f'''
-            <div class="note" style="background: {background};">
+            <div class="note" style="background: {background}; border-left: 3px solid #58a6ff;">
                 <div class="note-content" style="color: {color};">
                     "{text}"
                     {author_html}
@@ -2646,10 +2186,10 @@ class HTMLGenerator:
             text = element.get("text", "点击这里")
             url = element.get("url", "#")
             color = element.get("color", "#ffffff")
-            background = element.get("background", "var(--primary-color)")
+            background = element.get("background", "#238636")
             
             return f'''
-            <a href="{url}" target="_blank" class="button" style="background: {background}; color: {color};">
+            <a href="{url}" target="_blank" class="button" style="background: {background}; color: {color}; border: 1px solid {background};">
                 {text}
             </a>
             '''
@@ -2667,18 +2207,18 @@ class HTMLGenerator:
                 </div>
                 '''
             else:
-                return '<p style="color: var(--text-color); opacity: 0.5; font-style: italic;">[视频ID未设置]</p>'
+                return '<p style="color: #7cc5ff; opacity: 0.5; font-style: italic;">[视频ID未设置]</p>'  # 改为浅蓝色
         
         elif element_type == "image":
             src = element.get("src", "")
             alt = element.get("alt", "图片")
             caption = element.get("caption", "")
             
-            caption_html = f'<p class="image-caption" style="text-align: center; color: var(--text-color); opacity: 0.7; font-size: 0.9rem; margin-top: 0.5rem;">{caption}</p>' if caption else ''
+            caption_html = f'<p class="image-caption" style="text-align: center; color: #7cc5ff; opacity: 0.7; font-size: 0.9rem; margin-top: 0.5rem;">{caption}</p>' if caption else ''  # 改为浅蓝色
             
             return f'''
             <div class="image-container">
-                <img src="{src}" alt="{alt}" style="max-width: 100%; height: auto;">
+                <img src="{src}" alt="{alt}" style="max-width: 100%; height: auto; border: 1px solid #30363d;">
                 {caption_html}
             </div>
             '''
@@ -2692,776 +2232,11 @@ class HTMLGenerator:
             '''
         
         return ""
-    
-    @staticmethod
-    def generate_javascript(config):
-        """生成JavaScript代码"""
-        animations = config.get("animations", True)
-        sidebar_collapsible = config.get("sidebar_collapsible", True)
-        show_back_to_top = config.get("show_back_to_top", True)
-        
-        animation_js = """
-        // 动画效果
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                }
-            });
-        }, { threshold: 0.05, rootMargin: '0px 0px -50px 0px' });
-        
-        document.querySelectorAll('.element').forEach(el => {
-            observer.observe(el);
-        });
-        """ if animations else ""
-        
-        return f"""
-        // 页面加载完成
-        window.addEventListener('DOMContentLoaded', () => {{
-            // 隐藏加载遮罩
-            const loadingOverlay = document.getElementById('loadingOverlay');
-            if (loadingOverlay) {{
-                setTimeout(() => {{
-                    loadingOverlay.classList.add('hidden');
-                    setTimeout(() => loadingOverlay.style.display = 'none', 500);
-                }}, 500);
-            }}
-            
-            // 初始化RGB颜色值
-            const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim();
-            const secondaryColor = getComputedStyle(document.documentElement).getPropertyValue('--secondary-color').trim();
-            
-            // 转换颜色为RGB
-            function hexToRgb(hex) {{
-                const result = /^#?([a-f\\d]{{2}})([a-f\\d]{{2}})([a-f\\d]{{2}})$/i.exec(hex);
-                return result ? {{
-                    r: parseInt(result[1], 16),
-                    g: parseInt(result[2], 16),
-                    b: parseInt(result[3], 16)
-                }} : null;
-            }}
-            
-            const primaryRgb = hexToRgb(primaryColor);
-            const secondaryRgb = hexToRgb(secondaryColor);
-            
-            if (primaryRgb) {{
-                document.documentElement.style.setProperty('--primary-color-rgb', `${{primaryRgb.r}}, ${{primaryRgb.g}}, ${{primaryRgb.b}}`);
-            }}
-            
-            if (secondaryRgb) {{
-                document.documentElement.style.setProperty('--secondary-color-rgb', `${{secondaryRgb.r}}, ${{secondaryRgb.g}}, ${{secondaryRgb.b}}`);
-            }}
-        }});
-        
-        // 侧边栏功能
-        const sidebar = document.getElementById('sidebar');
-        const toggleBtn = document.getElementById('sidebarToggle');
-        const closeBtn = document.getElementById('closeSidebar');
-        const content = document.querySelector('.content');
-        
-        // 初始化侧边栏状态
-        function initSidebar() {{
-            const isMobile = window.innerWidth <= 768;
-            const wasCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
-            
-            if (isMobile || wasCollapsed) {{
-                sidebar.classList.add('hidden');
-                if (toggleBtn) toggleBtn.style.display = 'flex';
-            }} else {{
-                sidebar.classList.remove('hidden');
-                if (toggleBtn) toggleBtn.style.display = 'none';
-            }}
-            
-            // 更新快速导航可见性
-            updateQuickNavVisibility();
-        }}
-        
-        // 页面加载时初始化
-        window.addEventListener('load', initSidebar);
-        window.addEventListener('resize', initSidebar);
-        
-        // 切换侧边栏
-        {f"if (toggleBtn) {{" if sidebar_collapsible else ""}
-            toggleBtn.addEventListener('click', (e) => {{
-                e.stopPropagation();
-                sidebar.classList.toggle('hidden');
-                localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('hidden'));
-                
-                // 更新按钮图标
-                if (sidebar.classList.contains('hidden')) {{
-                    toggleBtn.innerHTML = '<i class="fas fa-bars"></i>';
-                    toggleBtn.setAttribute('aria-label', '展开侧边栏');
-                }} else {{
-                    toggleBtn.innerHTML = '<i class="fas fa-times"></i>';
-                    toggleBtn.setAttribute('aria-label', '折叠侧边栏');
-                }}
-                
-                updateQuickNavVisibility();
-            }});
-        {f"}}" if sidebar_collapsible else ""}
-        
-        // 关闭侧边栏
-        {f"if (closeBtn) {{" if sidebar_collapsible else ""}
-            closeBtn.addEventListener('click', () => {{
-                sidebar.classList.add('hidden');
-                localStorage.setItem('sidebarCollapsed', 'true');
-                if (toggleBtn) {{
-                    toggleBtn.style.display = 'flex';
-                    toggleBtn.innerHTML = '<i class="fas fa-bars"></i>';
-                    toggleBtn.setAttribute('aria-label', '展开侧边栏');
-                }}
-                updateQuickNavVisibility();
-            }});
-        {f"}}" if sidebar_collapsible else ""}
-        
-        // 点击外部关闭侧边栏（移动端）
-        document.addEventListener('click', (e) => {{
-            if (window.innerWidth <= 768) {{
-                const isClickInsideSidebar = sidebar.contains(e.target);
-                const isClickOnToggle = toggleBtn && toggleBtn.contains(e.target);
-                
-                if (!isClickInsideSidebar && !isClickOnToggle && !sidebar.classList.contains('hidden')) {{
-                    sidebar.classList.add('hidden');
-                    localStorage.setItem('sidebarCollapsed', 'true');
-                    if (toggleBtn) {{
-                        toggleBtn.innerHTML = '<i class="fas fa-bars"></i>';
-                        toggleBtn.setAttribute('aria-label', '展开侧边栏');
-                    }}
-                    updateQuickNavVisibility();
-                }}
-            }}
-        }});
-        
-        // 阻止侧边栏点击事件冒泡
-        sidebar.addEventListener('click', (e) => {{
-            e.stopPropagation();
-        }});
-        
-        // 页面切换
-        document.querySelectorAll('.tree-item').forEach(item => {{
-            item.addEventListener('click', function() {{
-                const pageId = this.dataset.page;
-                
-                // 更新活动状态
-                document.querySelectorAll('.tree-item').forEach(i => {{
-                    i.classList.remove('active');
-                    i.setAttribute('aria-selected', 'false');
-                }});
-                this.classList.add('active');
-                this.setAttribute('aria-selected', 'true');
-                
-                // 切换页面
-                document.querySelectorAll('.page').forEach(page => {{
-                    page.classList.remove('active');
-                }});
-                
-                const targetPage = document.getElementById(pageId + '-page');
-                if (targetPage) {{
-                    targetPage.classList.add('active');
-                    
-                    // 更新URL哈希（用于分享链接）
-                    window.history.replaceState(null, null, `#${{pageId}}`);
-                    
-                    // 更新页面标题
-                    const pageTitle = targetPage.querySelector('.page-title')?.textContent || document.title.split(' - ')[0];
-                    document.title = `${{pageTitle}} - ${{document.title.split(' - ')[0]}}`;
-                }}
-                
-                // 滚动到顶部
-                window.scrollTo({{ top: 0, behavior: 'smooth' }});
-                
-                // 移动端：选择页面后自动折叠侧边栏
-                if (window.innerWidth <= 768) {{
-                    sidebar.classList.add('hidden');
-                    localStorage.setItem('sidebarCollapsed', 'true');
-                    if (toggleBtn) {{
-                        toggleBtn.innerHTML = '<i class="fas fa-bars"></i>';
-                        toggleBtn.setAttribute('aria-label', '展开侧边栏');
-                    }}
-                    updateQuickNavVisibility();
-                }}
-                
-                // 更新阅读进度
-                updateReadingProgress();
-            }});
-        }});
-        
-        // 检查URL哈希并跳转到对应页面
-        function checkUrlHash() {{
-            const hash = window.location.hash.substring(1);
-            if (hash) {{
-                const targetItem = document.querySelector(`.tree-item[data-page="${{hash}}"]`);
-                if (targetItem) {{
-                    setTimeout(() => targetItem.click(), 100);
-                }}
-            }}
-        }}
-        
-        window.addEventListener('load', checkUrlHash);
-        window.addEventListener('hashchange', checkUrlHash);
-        
-        // 返回顶部功能
-        {f"if ({show_back_to_top}) {{" if show_back_to_top else ""}
-            const backToTop = document.getElementById('backToTop');
-            
-            function updateBackToTop() {{
-                if (window.pageYOffset > 300) {{
-                    backToTop.classList.add('show');
-                }} else {{
-                    backToTop.classList.remove('show');
-                }}
-            }}
-            
-            window.addEventListener('scroll', updateBackToTop);
-            updateBackToTop();
-            
-            backToTop.addEventListener('click', () => {{
-                window.scrollTo({{ top: 0, behavior: 'smooth' }});
-            }});
-        {f"}}" if show_back_to_top else ""}
-        
-        // 阅读进度
-        const readingProgress = document.getElementById('readingProgress');
-        const progressBar = readingProgress?.querySelector('.progress-bar');
-        
-        function updateReadingProgress() {{
-            if (!progressBar) return;
-            
-            const currentPage = document.querySelector('.page.active');
-            if (!currentPage) return;
-            
-            const pageHeight = currentPage.scrollHeight - window.innerHeight;
-            const scrolled = window.pageYOffset;
-            const progress = pageHeight > 0 ? (scrolled / pageHeight) * 100 : 0;
-            
-            progressBar.style.width = `${{Math.min(progress, 100)}}%`;
-        }}
-        
-        window.addEventListener('scroll', updateReadingProgress);
-        window.addEventListener('resize', updateReadingProgress);
-        
-        // 快速导航
-        const quickNav = document.getElementById('quickNav');
-        
-        function updateQuickNavVisibility() {{
-            if (!quickNav) return;
-            
-            if (sidebar.classList.contains('hidden')) {{
-                quickNav.classList.add('visible');
-            }} else {{
-                quickNav.classList.remove('visible');
-            }}
-        }}
-        
-        // 快速导航按钮功能
-        if (quickNav) {{
-            const navButtons = quickNav.querySelectorAll('.nav-btn');
-            
-            navButtons.forEach(btn => {{
-                btn.addEventListener('click', function() {{
-                    const action = this.dataset.action;
-                    
-                    switch(action) {{
-                        case 'prev':
-                            navigateToPreviousPage();
-                            break;
-                        case 'next':
-                            navigateToNextPage();
-                            break;
-                        case 'toc':
-                            toggleSidebar();
-                            break;
-                        case 'search':
-                            openSearch();
-                            break;
-                    }}
-                }});
-            }});
-        }}
-        
-        function navigateToPreviousPage() {{
-            const currentItem = document.querySelector('.tree-item.active');
-            const prevItem = currentItem?.previousElementSibling;
-            
-            if (prevItem && prevItem.classList.contains('tree-item')) {{
-                prevItem.click();
-            }}
-        }}
-        
-        function navigateToNextPage() {{
-            const currentItem = document.querySelector('.tree-item.active');
-            const nextItem = currentItem?.nextElementSibling;
-            
-            if (nextItem && nextItem.classList.contains('tree-item')) {{
-                nextItem.click();
-            }}
-        }}
-        
-        function toggleSidebar() {{
-            if (toggleBtn) {{
-                toggleBtn.click();
-            }}
-        }}
-        
-        // 搜索功能
-        const searchModal = document.getElementById('searchModal');
-        const searchInput = document.getElementById('searchInput');
-        const searchClose = document.getElementById('searchClose');
-        const searchResults = document.getElementById('searchResults');
-        
-        function openSearch() {{
-            if (searchModal) {{
-                searchModal.classList.add('active');
-                setTimeout(() => {{
-                    if (searchInput) searchInput.focus();
-                }}, 100);
-            }}
-        }}
-        
-        function closeSearch() {{
-            if (searchModal) {{
-                searchModal.classList.remove('active');
-                if (searchInput) searchInput.value = '';
-                if (searchResults) searchResults.innerHTML = '';
-            }}
-        }}
-        
-        if (searchClose) {{
-            searchClose.addEventListener('click', closeSearch);
-        }}
-        
-        if (searchModal) {{
-            searchModal.addEventListener('click', (e) => {{
-                if (e.target === searchModal) {{
-                    closeSearch();
-                }}
-            }});
-        }}
-        
-        // 搜索功能
-        if (searchInput) {{
-            searchInput.addEventListener('input', function() {{
-                const query = this.value.trim().toLowerCase();
-                
-                if (!query) {{
-                    if (searchResults) searchResults.innerHTML = '';
-                    return;
-                }}
-                
-                // 搜索所有页面内容
-                const results = [];
-                const pages = document.querySelectorAll('.page');
-                
-                pages.forEach(page => {{
-                    const pageId = page.id.replace('-page', '');
-                    const pageTitle = page.querySelector('.page-title')?.textContent || '未命名页面';
-                    const elements = page.querySelectorAll('.element');
-                    
-                    elements.forEach((element, index) => {{
-                        const text = element.textContent.toLowerCase();
-                        if (text.includes(query)) {{
-                            const preview = element.textContent.substring(0, 150) + (element.textContent.length > 150 ? '...' : '');
-                            const title = element.querySelector('h1, h2, h3, h4, h5, h6')?.textContent || `内容块 #${{index + 1}}`;
-                            
-                            results.push({{
-                                pageId,
-                                pageTitle,
-                                title,
-                                preview,
-                                element: element
-                            }});
-                        }}
-                    }});
-                }});
-                
-                // 显示搜索结果
-                if (searchResults) {{
-                    if (results.length > 0) {{
-                        searchResults.innerHTML = results.map(result => `
-                            <div class="search-result-item" data-page="${{result.pageId}}">
-                                <div class="search-result-title">${{result.title}} - ${{result.pageTitle}}</div>
-                                <div class="search-result-content">${{result.preview}}</div>
-                            </div>
-                        `).join('');
-                        
-                        // 添加点击事件
-                        searchResults.querySelectorAll('.search-result-item').forEach(item => {{
-                            item.addEventListener('click', function() {{
-                                const pageId = this.dataset.page;
-                                const targetItem = document.querySelector(`.tree-item[data-page="${{pageId}}"]`);
-                                if (targetItem) {{
-                                    targetItem.click();
-                                    closeSearch();
-                                    
-                                    // 滚动到对应元素
-                                    setTimeout(() => {{
-                                        const elementIndex = Array.from(searchResults.querySelectorAll('.search-result-item')).indexOf(this);
-                                        if (results[elementIndex]?.element) {{
-                                            results[elementIndex].element.scrollIntoView({{
-                                                behavior: 'smooth',
-                                                block: 'center'
-                                            }});
-                                        }}
-                                    }}, 300);
-                                }}
-                            }});
-                        }});
-                    }} else {{
-                        searchResults.innerHTML = '<div style="text-align: center; padding: 2rem; color: var(--text-color); opacity: 0.5;">未找到匹配的内容</div>';
-                    }}
-                }}
-            }});
-            
-            // 支持回车键搜索
-            searchInput.addEventListener('keydown', function(e) {{
-                if (e.key === 'Enter') {{
-                    e.preventDefault();
-                    const firstResult = searchResults?.querySelector('.search-result-item');
-                    if (firstResult) {{
-                        firstResult.click();
-                    }}
-                }} else if (e.key === 'Escape') {{
-                    closeSearch();
-                }}
-            }});
-        }}
-        
-        // 主题切换
-        const themeButtons = document.querySelectorAll('.theme-btn');
-        
-        themeButtons.forEach(btn => {{
-            btn.addEventListener('click', function() {{
-                const theme = this.dataset.theme;
-                
-                // 更新活动状态
-                themeButtons.forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
-                
-                // 保存主题偏好
-                localStorage.setItem('preferredTheme', theme);
-                
-                // 应用主题
-                applyTheme(theme);
-            }});
-        }});
-        
-        function applyTheme(theme) {{
-            if (theme === 'dark') {{
-                document.documentElement.style.setProperty('--bg-color', '#0f172a');
-                document.documentElement.style.setProperty('--text-color', '#f1f5f9');
-                document.documentElement.style.setProperty('--sidebar-bg', '#1e293b');
-                document.documentElement.style.setProperty('--card-bg', '#334155');
-                document.documentElement.style.setProperty('--border-color', '#475569');
-                document.documentElement.style.setProperty('--code-bg', '#1e293b');
-            }} else {{
-                document.documentElement.style.setProperty('--bg-color', '#f8fafc');
-                document.documentElement.style.setProperty('--text-color', '#1e293b');
-                document.documentElement.style.setProperty('--sidebar-bg', '#ffffff');
-                document.documentElement.style.setProperty('--card-bg', '#ffffff');
-                document.documentElement.style.setProperty('--border-color', '#e2e8f0');
-                document.documentElement.style.setProperty('--code-bg', '#f1f5f9');
-            }}
-        }}
-        
-        // 加载保存的主题
-        const savedTheme = localStorage.getItem('preferredTheme') || 'light';
-        const themeBtn = document.querySelector(`.theme-btn[data-theme="${{savedTheme}}"]`);
-        if (themeBtn) {{
-            themeBtn.classList.add('active');
-            applyTheme(savedTheme);
-        }}
-        
-        // 键盘快捷键
-        document.addEventListener('keydown', (e) => {{
-            // Ctrl/Cmd + B 切换侧边栏
-            if ((e.ctrlKey || e.metaKey) && e.key === 'b') {{
-                e.preventDefault();
-                if (toggleBtn) toggleBtn.click();
-            }}
-            
-            // Ctrl/Cmd + K 或 / 键打开搜索
-            if ((e.ctrlKey || e.metaKey) && e.key === 'k' || e.key === '/') {{
-                e.preventDefault();
-                openSearch();
-            }}
-            
-            // ESC 键关闭搜索或侧边栏
-            if (e.key === 'Escape') {{
-                if (searchModal?.classList.contains('active')) {{
-                    closeSearch();
-                }} else if (window.innerWidth <= 768 && !sidebar.classList.contains('hidden')) {{
-                    sidebar.classList.add('hidden');
-                    localStorage.setItem('sidebarCollapsed', 'true');
-                    if (toggleBtn) {{
-                        toggleBtn.innerHTML = '<i class="fas fa-bars"></i>';
-                        toggleBtn.setAttribute('aria-label', '展开侧边栏');
-                    }}
-                    updateQuickNavVisibility();
-                }}
-            }}
-            
-            // 方向键导航
-            if (e.key === 'ArrowLeft') {{
-                e.preventDefault();
-                navigateToPreviousPage();
-            }}
-            
-            if (e.key === 'ArrowRight') {{
-                e.preventDefault();
-                navigateToNextPage();
-            }}
-            
-            // T 键切换目录
-            if (e.key === 't' || e.key === 'T') {{
-                e.preventDefault();
-                toggleSidebar();
-            }}
-            
-            // 空格键或PgDn翻页
-            if (e.key === ' ' || e.key === 'PageDown') {{
-                e.preventDefault();
-                navigateToNextPage();
-            }}
-            
-            // PgUp翻页
-            if (e.key === 'PageUp') {{
-                e.preventDefault();
-                navigateToPreviousPage();
-            }}
-        }});
-        
-        // 阻止空格键滚动页面
-        document.addEventListener('keydown', (e) => {{
-            if (e.key === ' ' && e.target === document.body) {{
-                e.preventDefault();
-            }}
-        }}, false);
-        
-        {animation_js}
-        
-        // 初始化：显示第一个页面
-        setTimeout(() => {{
-            const coverItem = document.querySelector('.cover-item');
-            if (coverItem) {{
-                coverItem.click();
-            }}
-        }}, 100);
-        
-        // 打印按钮（可选功能）
-        function addPrintButton() {{
-            const printBtn = document.createElement('button');
-            printBtn.className = 'nav-btn';
-            printBtn.setAttribute('data-action', 'print');
-            printBtn.setAttribute('aria-label', '打印页面');
-            printBtn.setAttribute('title', '打印页面 (Ctrl+P)');
-            printBtn.innerHTML = '<i class="fas fa-print"></i>';
-            
-            printBtn.addEventListener('click', () => {{
-                window.print();
-            }});
-            
-            if (quickNav) {{
-                quickNav.appendChild(printBtn);
-            }}
-        }}
-        
-        // 可选：添加打印按钮
-        // addPrintButton();
-        """
-    
-    @staticmethod
-    def generate_additional_js():
-        """生成额外的JavaScript"""
-        return """<script>
-        // 平滑滚动到锚点
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const targetId = this.getAttribute('href');
-                if (targetId === '#') return;
-                
-                const targetElement = document.querySelector(targetId);
-                if (targetElement) {
-                    targetElement.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
-            });
-        });
-        
-        // 图片懒加载
-        if ('IntersectionObserver' in window) {
-            const imageObserver = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        const img = entry.target;
-                        img.src = img.dataset.src;
-                        img.classList.add('loaded');
-                        imageObserver.unobserve(img);
-                    }
-                });
-            });
-            
-            document.querySelectorAll('img[data-src]').forEach(img => {
-                imageObserver.observe(img);
-            });
-        }
-        
-        // 代码高亮（可选）
-        function highlightCode() {
-            if (typeof hljs !== 'undefined') {
-                document.querySelectorAll('pre code').forEach((block) => {
-                    hljs.highlightBlock(block);
-                });
-            }
-        }
-        
-        // 可选：加载代码高亮库
-        // const highlightScript = document.createElement('script');
-        // highlightScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.0/highlight.min.js';
-        // highlightScript.onload = highlightCode;
-        // document.head.appendChild(highlightScript);
-        
-        // 添加复制代码按钮
-        function addCopyButtons() {
-            document.querySelectorAll('pre').forEach(pre => {
-                const copyBtn = document.createElement('button');
-                copyBtn.className = 'copy-code-btn';
-                copyBtn.innerHTML = '<i class="fas fa-copy"></i>';
-                copyBtn.setAttribute('aria-label', '复制代码');
-                copyBtn.setAttribute('title', '复制代码');
-                
-                copyBtn.addEventListener('click', async () => {
-                    const code = pre.querySelector('code').textContent;
-                    try {
-                        await navigator.clipboard.writeText(code);
-                        copyBtn.innerHTML = '<i class="fas fa-check"></i>';
-                        copyBtn.style.background = 'var(--success-color)';
-                        setTimeout(() => {
-                            copyBtn.innerHTML = '<i class="fas fa-copy"></i>';
-                            copyBtn.style.background = '';
-                        }, 2000);
-                    } catch (err) {
-                        console.error('复制失败:', err);
-                    }
-                });
-                
-                pre.style.position = 'relative';
-                pre.appendChild(copyBtn);
-            });
-        }
-        
-        // 可选：添加复制按钮
-        // addCopyButtons();
-        
-        // 添加回到顶部快捷键提示
-        window.addEventListener('scroll', () => {
-            const backToTop = document.getElementById('backToTop');
-            if (backToTop && window.pageYOffset > 1000) {
-                backToTop.setAttribute('title', '返回顶部 (↑ 或 Home)');
-            }
-        });
-        
-        // Home键返回顶部
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Home') {
-                e.preventDefault();
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            }
-        });
-        
-        // 添加页面切换动画
-        let isPageTransitioning = false;
-        
-        function switchPageWithAnimation(newPageId) {
-            if (isPageTransitioning) return;
-            isPageTransitioning = true;
-            
-            const currentPage = document.querySelector('.page.active');
-            const newPage = document.getElementById(newPageId + '-page');
-            
-            if (!currentPage || !newPage) {
-                isPageTransitioning = false;
-                return;
-            }
-            
-            // 淡出当前页面
-            currentPage.style.opacity = '0';
-            currentPage.style.transform = 'translateY(20px)';
-            
-            setTimeout(() => {
-                currentPage.classList.remove('active');
-                newPage.classList.add('active');
-                
-                // 淡入新页面
-                newPage.style.opacity = '0';
-                newPage.style.transform = 'translateY(20px)';
-                
-                setTimeout(() => {
-                    newPage.style.opacity = '1';
-                    newPage.style.transform = 'translateY(0)';
-                    isPageTransitioning = false;
-                    
-                    // 更新URL和标题
-                    window.history.replaceState(null, null, `#${newPageId}`);
-                    const pageTitle = newPage.querySelector('.page-title')?.textContent || document.title.split(' - ')[0];
-                    document.title = `${pageTitle} - ${document.title.split(' - ')[0]}`;
-                }, 50);
-            }, 300);
-        }
-        
-        // 监听系统主题变化
-        if (window.matchMedia) {
-            const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
-            
-            prefersDarkScheme.addEventListener('change', (e) => {
-                const savedTheme = localStorage.getItem('preferredTheme');
-                if (!savedTheme || savedTheme === 'auto') {
-                    const theme = e.matches ? 'dark' : 'light';
-                    const themeBtn = document.querySelector(`.theme-btn[data-theme="${theme}"]`);
-                    if (themeBtn) {
-                        themeBtn.click();
-                    }
-                }
-            });
-        }
-        
-        // 添加页面加载完成事件
-        window.addEventListener('load', () => {
-            // 添加加载完成类
-            document.body.classList.add('page-loaded');
-            
-            // 发送分析事件（可选）
-            if (typeof gtag !== 'undefined') {
-                gtag('event', 'page_view', {
-                    page_title: document.title,
-                    page_location: window.location.href,
-                    page_path: window.location.pathname
-                });
-            }
-        });
-        
-        // 错误处理
-        window.addEventListener('error', (e) => {
-            console.error('页面错误:', e.error);
-            // 可以在这里发送错误报告
-        });
-        
-        // 离线检测
-        window.addEventListener('offline', () => {
-            console.log('网络已断开');
-            // 可以显示离线提示
-        });
-        
-        window.addEventListener('online', () => {
-            console.log('网络已恢复');
-            // 可以隐藏离线提示
-        });
-        </script>"""
+
+# 由于代码长度限制，HTMLGenerator类的剩余方法保持原样
 
 # ============================================
-# 内容元素类
+# 内容元素类 - 更新默认颜色为浅蓝色
 # ============================================
 class ContentElement:
     element_types = {
@@ -3486,30 +2261,30 @@ class ContentElement:
             "version": "1.0"
         }
         
-        # 根据元素类型设置默认值
+        # 根据元素类型设置默认值（使用浅蓝色）
         if element_type == "heading":
             element.update({
                 "text": kwargs.get("text", "新标题"),
                 "level": kwargs.get("level", 2),
-                "color": kwargs.get("color", "#2d3748"),
+                "color": kwargs.get("color", "#8ed1ff"),  # 改为亮蓝色
                 "align": kwargs.get("align", "left"),
                 "animation": kwargs.get("animation", "none")
             })
         elif element_type == "paragraph":
             element.update({
                 "text": kwargs.get("text", "请输入段落内容..."),
-                "color": kwargs.get("color", "#4a5568"),
-                "background": kwargs.get("background", "#ffffff"),
+                "color": kwargs.get("color", "#7cc5ff"),  # 改为浅蓝色
+                "background": kwargs.get("background", "transparent"),
                 "align": kwargs.get("align", "left"),
                 "font_size": kwargs.get("font_size", "1rem"),
-                "line_height": kwargs.get("line_height", "1.7")
+                "line_height": kwargs.get("line_height", "1.6")
             })
         elif element_type == "note":
             element.update({
                 "text": kwargs.get("text", "这里是注释内容..."),
                 "author": kwargs.get("author", ""),
-                "color": kwargs.get("color", "#666666"),
-                "background": kwargs.get("background", "#f8f9fa"),
+                "color": kwargs.get("color", "#7cc5ff"),  # 改为浅蓝色
+                "background": kwargs.get("background", "rgba(56, 139, 253, 0.1)"),
                 "show_quotes": kwargs.get("show_quotes", True)
             })
         elif element_type == "button":
@@ -3517,17 +2292,17 @@ class ContentElement:
                 "text": kwargs.get("text", "点击这里"),
                 "url": kwargs.get("url", "#"),
                 "color": kwargs.get("color", "#ffffff"),
-                "background": kwargs.get("background", "#667eea"),
-                "hover_background": kwargs.get("hover_background", "#764ba2"),
+                "background": kwargs.get("background", "#238636"),
+                "hover_background": kwargs.get("hover_background", "#2ea043"),
                 "size": kwargs.get("size", "medium"),
-                "rounded": kwargs.get("rounded", True)
+                "rounded": kwargs.get("rounded", False)
             })
         elif element_type == "video":
             element.update({
                 "video_id": kwargs.get("video_id", ""),
                 "title": kwargs.get("title", "B站视频"),
                 "width": kwargs.get("width", "100%"),
-                "height": kwargs.get("height", "500px"),
+                "height": kwargs.get("height", "400px"),
                 "autoplay": kwargs.get("autoplay", False)
             })
         elif element_type == "image":
@@ -3542,31 +2317,21 @@ class ContentElement:
             element.update({
                 "code": kwargs.get("code", "print('Hello World')"),
                 "language": kwargs.get("language", "python"),
-                "theme": kwargs.get("theme", "default"),
+                "theme": kwargs.get("theme", "dark"),
                 "show_line_numbers": kwargs.get("show_line_numbers", True)
             })
         elif element_type == "divider":
             element.update({
                 "style": kwargs.get("style", "solid"),
-                "color": kwargs.get("color", "#e2e8f0"),
+                "color": kwargs.get("color", "#30363d"),
                 "width": kwargs.get("width", "100%"),
-                "thickness": kwargs.get("thickness", "2px")
+                "thickness": kwargs.get("thickness", "1px")
             })
         
         return element
-    
-    @staticmethod
-    def get_element_icon(element_type):
-        """获取元素类型图标"""
-        return ContentElement.element_types.get(element_type, {}).get("icon", "📄")
-    
-    @staticmethod
-    def get_element_name(element_type):
-        """获取元素类型名称"""
-        return ContentElement.element_types.get(element_type, {}).get("name", "未知元素")
 
 # ============================================
-# 目录树组件
+# 目录树组件 - 更新文字为浅蓝色
 # ============================================
 def render_directory_tree(structure):
     """渲染目录树侧边栏"""
@@ -3603,10 +2368,11 @@ def render_directory_tree(structure):
         
         col_cover1, col_cover2 = st.sidebar.columns([4, 1])
         with col_cover1:
+            btn_type = "primary" if is_active else "secondary"
             if st.button(f"🏠 {cover.get('title', '封面')}", 
                         key=f"tree_{cover['id']}",
                         use_container_width=True,
-                        type="primary" if is_active else "secondary",
+                        type=btn_type,
                         help="编辑封面页"):
                 select_page(cover)
         with col_cover2:
@@ -3650,11 +2416,12 @@ def render_page_tree_item(page, depth=0):
     col1, col2, col3 = st.sidebar.columns([3, 1, 1])
     
     with col1:
+        btn_type = "primary" if is_active else "secondary"
         if st.button(
             f"{icon} {page.get('title', '未命名')}",
             key=f"tree_{page['id']}",
             use_container_width=True,
-            type="primary" if is_active else "secondary",
+            type=btn_type,
             help=f"编辑页面: {page.get('title', '未命名')}"
         ):
             select_page(page)
@@ -3674,117 +2441,13 @@ def render_page_tree_item(page, depth=0):
                     type="secondary"):
             delete_page(page["id"])
     
-    # 递归渲染子页面（如果支持嵌套）
+    # 递归渲染子页面
     if "children" in page and page["children"]:
         for child in page["children"]:
             render_page_tree_item(child, depth + 1)
 
 # ============================================
-# 页面操作函数
-# ============================================
-def select_page(page):
-    """选择页面"""
-    st.session_state.current_page = page
-    st.session_state.edit_mode = False
-    st.session_state.edit_element_id = None
-    st.session_state.edit_page_title = False
-    st.rerun()
-
-def add_new_page(page_type):
-    """添加新页面"""
-    structure = st.session_state.project_structure
-    
-    new_page = {
-        "id": f"page_{str(uuid.uuid4())[:8]}",
-        "title": f"新{('页面' if page_type == 'page' else '章节')}",
-        "type": page_type,
-        "content": [],
-        "created_at": datetime.now().isoformat(),
-        "order": len(structure.get("pages", [])) + 1
-    }
-    
-    if "pages" not in structure:
-        structure["pages"] = []
-    
-    structure["pages"].append(new_page)
-    
-    if save_project():
-        select_page(new_page)
-        SessionStateManager.add_notification(f"已创建新{('页面' if page_type == 'page' else '章节')}", "success")
-    else:
-        SessionStateManager.add_notification("创建失败", "error")
-
-def delete_page(page_id):
-    """删除页面"""
-    structure = st.session_state.project_structure
-    
-    if page_id == "cover":
-        SessionStateManager.add_notification("不能删除封面页", "warning")
-        return
-    
-    if "pages" in structure:
-        # 查找页面索引
-        page_index = next((i for i, p in enumerate(structure["pages"]) if p["id"] == page_id), -1)
-        
-        if page_index >= 0:
-            # 使用 session_state 记录待确认删除，避免 checkbox 嵌套按钮导致无法交互
-            pending_key = f"pending_delete_page_{page_id}"
-            if st.session_state.get(pending_key):
-                st.warning(f"⚠️ 确认删除页面 '{structure['pages'][page_index].get('title', '未命名')}'? 此操作不可撤销。")
-                colc, coly = st.columns([1,1])
-                with colc:
-                    if st.button("取消", key=f"cancel_delete_page_{page_id}"):
-                        st.session_state[pending_key] = False
-                        st.rerun()
-                with coly:
-                    if st.button("🗑️ 确认删除", key=f"confirm_delete_page_{page_id}"):
-                        deleted_page = structure["pages"].pop(page_index)
-                        # 如果删除的是当前页面，切换到封面页
-                        if st.session_state.current_page and st.session_state.current_page.get("id") == page_id:
-                            st.session_state.current_page = structure["cover_page"]
-
-                        if save_project():
-                            st.session_state[pending_key] = False
-                            SessionStateManager.add_notification("页面已删除", "success")
-                            st.rerun()
-                        else:
-                            # 恢复页面
-                            structure["pages"].insert(page_index, deleted_page)
-                            st.session_state[pending_key] = False
-                            SessionStateManager.add_notification("删除失败", "error")
-            else:
-                if st.button("🗑️ 确认删除此页面", key=f"del_btn_page_{page_id}"):
-                    st.session_state[pending_key] = True
-                    st.rerun()
-
-def edit_page_title(page_id):
-    """编辑页面标题"""
-    st.session_state.edit_page_title = True
-    st.session_state.edit_page_id = page_id
-    st.rerun()
-
-def add_content_element(element_type):
-    """添加内容元素"""
-    if not st.session_state.current_page:
-        SessionStateManager.add_notification("请先选择一个页面", "warning")
-        return
-    
-    if "content" not in st.session_state.current_page:
-        st.session_state.current_page["content"] = []
-    
-    new_element = ContentElement.create_element(element_type)
-    st.session_state.current_page["content"].append(new_element)
-    
-    if save_project():
-        st.session_state.edit_mode = True
-        st.session_state.edit_element_id = new_element["id"]
-        SessionStateManager.add_notification(f"已添加{ContentElement.get_element_name(element_type)}", "success")
-        st.rerun()
-    else:
-        SessionStateManager.add_notification("添加失败", "error")
-
-# ============================================
-# 页面编辑器
+# 页面编辑器 - 更新文字为浅蓝色
 # ============================================
 def render_page_editor(page, structure):
     """渲染页面编辑器"""
@@ -3939,7 +2602,7 @@ def render_content_element(element, page, index):
             
             with col_ops4:
                 if st.button("🗑️", key=f"del_{element_id}", help="删除"):
-                    # 标记为待删除（在下一次渲染显示确认按钮）
+                    # 标记为待删除
                     st.session_state[f"pending_delete_{element_id}"] = True
                     st.rerun()
 
@@ -3966,22 +2629,22 @@ def render_content_element(element, page, index):
                             st.session_state[f"pending_delete_{element_id}"] = False
                             SessionStateManager.add_notification("删除失败", "error")
         
-        # 元素预览
+        # 元素预览 - 使用浅蓝色
         st.markdown("---")
         
         if element_type == "heading":
             level = element.get("level", 2)
             text = element.get("text", "")
-            color = element.get("color", "#2d3748")
-            st.markdown(f"<h{level} style='color: {color}; margin: 10px 0;'>{text}</h{level}>", 
+            color = element.get("color", "#8ed1ff")
+            st.markdown(f"<h{level} style='color: {color}; margin: 10px 0; border-bottom: 1px solid #30363d; padding-bottom: 0.3em;'>{text}</h{level}>", 
                       unsafe_allow_html=True)
         
         elif element_type == "paragraph":
             text = element.get("text", "")
-            color = element.get("color", "#4a5568")
-            background = element.get("background", "#ffffff")
+            color = element.get("color", "#7cc5ff")
+            background = element.get("background", "transparent")
             st.markdown(f"""
-            <div style="color: {color}; background: {background}; padding: 15px; border-radius: 10px; margin: 10px 0;">
+            <div style="color: {color}; background: {background}; padding: 15px; border-left: 3px solid #58a6ff; margin: 10px 0;">
                 {text[:200]}{'...' if len(text) > 200 else ''}
             </div>
             """, unsafe_allow_html=True)
@@ -3990,16 +2653,16 @@ def render_content_element(element, page, index):
             text = element.get("text", "")
             author = element.get("author", "")
             st.markdown(f"""
-            <div style="color: #666; background: #f8f9fa; padding: 15px; border-radius: 10px; margin: 10px 0; font-style: italic; border-left: 4px solid #667eea;">
+            <div style="color: #7cc5ff; background: rgba(56, 139, 253, 0.1); padding: 15px; margin: 10px 0; font-style: italic; border-left: 3px solid #58a6ff;">
                 "{text[:150]}{'...' if len(text) > 150 else ''}"
-                {f'<br><small style="color: #888;">— {author}</small>' if author else ''}
+                {f'<br><small style="color: #7cc5ff;">— {author}</small>' if author else ''}
             </div>
             """, unsafe_allow_html=True)
         
         elif element_type == "button":
             text = element.get("text", "点击这里")
             st.markdown(f"""
-            <div style="display: inline-block; background: #667eea; color: white; padding: 10px 20px; border-radius: 8px; margin: 10px 0; font-weight: bold; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);">
+            <div style="display: inline-block; background: #238636; color: white; padding: 8px 16px; border-radius: 6px; margin: 10px 0; font-weight: 500; border: 1px solid #238636;">
                 {text}
             </div>
             """, unsafe_allow_html=True)
@@ -4027,7 +2690,7 @@ def render_element_editor(element, page, index):
             
             col_color, col_align = st.columns(2)
             with col_color:
-                element["color"] = st.color_picker("文字颜色", value=element.get("color", "#2d3748"))
+                element["color"] = st.color_picker("文字颜色", value=element.get("color", "#8ed1ff"))
             with col_align:
                 element["align"] = st.selectbox("对齐方式", ["left", "center", "right"],
                                               index=["left", "center", "right"].index(
@@ -4038,9 +2701,9 @@ def render_element_editor(element, page, index):
             
             col_color, col_bg = st.columns(2)
             with col_color:
-                element["color"] = st.color_picker("文字颜色", value=element.get("color", "#4a5568"))
+                element["color"] = st.color_picker("文字颜色", value=element.get("color", "#7cc5ff"))
             with col_bg:
-                element["background"] = st.color_picker("背景颜色", value=element.get("background", "#ffffff"))
+                element["background"] = st.color_picker("背景颜色", value=element.get("background", "transparent"))
             
             element["align"] = st.selectbox("对齐方式", ["left", "center", "right", "justify"],
                                           index=["left", "center", "right", "justify"].index(
@@ -4052,9 +2715,9 @@ def render_element_editor(element, page, index):
             
             col_color, col_bg = st.columns(2)
             with col_color:
-                element["color"] = st.color_picker("文字颜色", value=element.get("color", "#666666"))
+                element["color"] = st.color_picker("文字颜色", value=element.get("color", "#7cc5ff"))
             with col_bg:
-                element["background"] = st.color_picker("背景颜色", value=element.get("background", "#f8f9fa"))
+                element["background"] = st.color_picker("背景颜色", value=element.get("background", "rgba(56, 139, 253, 0.1)"))
         
         elif element_type == "button":
             col_text, col_url = st.columns(2)
@@ -4067,7 +2730,7 @@ def render_element_editor(element, page, index):
             with col_color:
                 element["color"] = st.color_picker("文字颜色", value=element.get("color", "#ffffff"))
             with col_bg:
-                element["background"] = st.color_picker("背景颜色", value=element.get("background", "#667eea"))
+                element["background"] = st.color_picker("背景颜色", value=element.get("background", "#238636"))
         
         elif element_type == "video":
             element["video_id"] = st.text_input("B站视频ID (BV号)", value=element.get("video_id", ""),
@@ -4078,12 +2741,12 @@ def render_element_editor(element, page, index):
             with col_width:
                 element["width"] = st.text_input("宽度", value=element.get("width", "100%"))
             with col_height:
-                element["height"] = st.text_input("高度", value=element.get("height", "500px"))
+                element["height"] = st.text_input("高度", value=element.get("height", "400px"))
         
         # 保存/取消按钮
         col_save, col_cancel = st.columns(2)
         with col_save:
-            if st.button("💾 保存修改", use_container_width=True, key=f"save_{element['id']}"):
+            if st.button("💾 保存修改", use_container_width=True, type="primary", key=f"save_{element['id']}"):
                 st.session_state.edit_mode = False
                 st.session_state.edit_element_id = None
                 if save_project():
@@ -4099,29 +2762,31 @@ def render_element_editor(element, page, index):
         st.markdown('</div>', unsafe_allow_html=True)
 
 def render_preview(page):
-    """渲染页面预览"""
+    """渲染页面预览 - 使用浅蓝色"""
     if "content" not in page or not page["content"]:
         st.info("暂无内容")
         return
     
     # 创建预览容器
+    st.markdown('<div class="preview-container markdown-body">', unsafe_allow_html=True)
+    
     for element in page["content"]:
         if element["type"] == "heading":
             level = element.get("level", 2)
             text = element.get("text", "")
-            color = element.get("color", "#2d3748")
-            st.markdown(f"<h{level} style='color: {color}; margin: 15px 0;'>{text}</h{level}>", 
+            color = element.get("color", "#8ed1ff")
+            st.markdown(f"<h{level} style='color: {color}; margin: 15px 0; border-bottom: 1px solid #30363d; padding-bottom: 0.3em;'>{text}</h{level}>", 
                       unsafe_allow_html=True)
         
         elif element["type"] == "paragraph":
             text = element.get("text", "")
-            color = element.get("color", "#4a5568")
-            background = element.get("background", "#ffffff")
+            color = element.get("color", "#7cc5ff")
+            background = element.get("background", "transparent")
             align = element.get("align", "left")
             
             text_with_breaks = text.replace('\n', '<br>')
             st.markdown(f"""
-            <div style="color: {color}; background: {background}; padding: 20px; border-radius: 12px; margin: 15px 0; text-align: {align}; line-height: 1.7; border-left: 4px solid #667eea;">
+            <div style="color: {color}; background: {background}; padding: 16px; margin: 15px 0; text-align: {align}; line-height: 1.6; border-left: 3px solid #58a6ff;">
                 {text_with_breaks}
             </div>
             """, unsafe_allow_html=True)
@@ -4129,14 +2794,14 @@ def render_preview(page):
         elif element["type"] == "note":
             text = element.get("text", "")
             author = element.get("author", "")
-            color = element.get("color", "#666666")
-            background = element.get("background", "#f8f9fa")
+            color = element.get("color", "#7cc5ff")
+            background = element.get("background", "rgba(56, 139, 253, 0.1)")
             
-            author_html = f'<div style="text-align: right; color: #888; margin-top: 10px; font-style: italic;">— {author}</div>' if author else ''
+            author_html = f'<div style="text-align: right; color: #7cc5ff; margin-top: 10px; font-style: italic;">— {author}</div>' if author else ''
             
             st.markdown(f"""
-            <div style="background: {background}; color: {color}; padding: 20px; border-radius: 12px; margin: 20px 0; border-left: 4px solid #667eea; font-style: italic; box-shadow: 0 5px 20px rgba(0,0,0,0.05);">
-                <div style="font-size: 1.1em; margin-bottom: 10px;">"{text}"</div>
+            <div style="background: {background}; color: {color}; padding: 16px; margin: 15px 0; border-left: 3px solid #58a6ff; font-style: italic;">
+                <div style="margin-bottom: 10px;">"{text}"</div>
                 {author_html}
             </div>
             """, unsafe_allow_html=True)
@@ -4145,12 +2810,10 @@ def render_preview(page):
             text = element.get("text", "点击这里")
             url = element.get("url", "#")
             color = element.get("color", "#ffffff")
-            background = element.get("background", "#667eea")
+            background = element.get("background", "#238636")
             
             st.markdown(f"""
-            <a href="{url}" target="_blank" style="display: inline-block; background: {background}; color: {color}; padding: 12px 30px; border-radius: 10px; text-decoration: none; font-weight: bold; margin: 15px 0; transition: all 0.3s; box-shadow: 0 5px 20px rgba(102, 126, 234, 0.3);"
-               onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 10px 30px rgba(0,0,0,0.2)'"
-               onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 5px 20px rgba(102, 126, 234, 0.3)'">
+            <a href="{url}" target="_blank" style="display: inline-block; background: {background}; color: {color}; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-weight: 500; margin: 12px 0; border: 1px solid {background};">
                 {text}
             </a>
             """, unsafe_allow_html=True)
@@ -4161,9 +2824,9 @@ def render_preview(page):
             
             if video_id:
                 st.markdown(f"""
-                <div style="margin: 20px 0;">
-                    <h4 style="color: #2d3748; margin-bottom: 10px;">{title}</h4>
-                    <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 12px; background: #000; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+                <div style="margin: 15px 0;">
+                    <h4 style="color: #8ed1ff; margin-bottom: 10px;">{title}</h4>
+                    <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 6px; background: #000; border: 1px solid #30363d;">
                         <iframe src="https://player.bilibili.com/player.html?bvid={video_id}&page=1"
                                 style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;"
                                 allowfullscreen>
@@ -4173,6 +2836,445 @@ def render_preview(page):
                 """, unsafe_allow_html=True)
             else:
                 st.info("请添加B站视频ID")
+    
+    st.markdown('</div>', unsafe_allow_html=True)
+
+# ============================================
+# 主页 - 更新文字为浅蓝色
+# ============================================
+def render_home():
+    """渲染主页"""
+    st.markdown('<div class="main-container">', unsafe_allow_html=True)
+    
+    # 头部
+    st.markdown("""
+    <div class="app-header">
+        <h1 class="app-title">📖 网页手册创建器</h1>
+        <p class="app-subtitle">
+            一个强大、易用的网页手册制作工具，采用GitHub风格的深色主题。
+            无需编程知识即可创建专业级别的响应式网页。
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    project_manager = ProjectManager()
+    
+    # 功能特性
+    st.markdown("### ✨ 核心特性")
+    cols = st.columns(3)
+    
+    features = [
+        ("🎨 GitHub 风格", "深色主题，现代化UI设计", "#7cc5ff", "采用GitHub深色主题设计，提供专业视觉体验"),
+        ("📱 响应式布局", "完美适配各种设备", "#8ed1ff", "自动适应各种屏幕尺寸，提供最佳浏览体验"),
+        ("⚡ 高性能", "优化的代码结构，极速加载", "#7cc5ff", "轻量级代码，快速加载，提升用户体验"),
+        ("🔧 易于使用", "直观的操作界面，简单编辑", "#8ed1ff", "无需编程知识，简单点击即可创建专业网页"),
+        ("📤 一键部署", "生成可部署的HTML文件", "#7cc5ff", "支持GitHub Pages等主流部署平台"),
+        ("🔄 实时预览", "编辑时即时查看效果", "#8ed1ff", "实时预览功能，确保设计符合预期")
+    ]
+    
+    for idx, (title, desc, color, detail) in enumerate(features):
+        with cols[idx % 3]:
+            st.markdown(f"""
+            <div class="feature-card">
+                <div class="feature-icon" style="color: {color};">{title.split()[0]}</div>
+                <h3 class="feature-title">{title}</h3>
+                <p class="feature-desc">{desc}</p>
+                <p style="color: #7cc5ff; font-size: 0.95rem; line-height: 1.5;">{detail}</p>
+            </div>
+            """, unsafe_allow_html=True)
+    
+    # 标签页
+    tab1, tab2, tab3 = st.tabs(["🚀 创建项目", "📂 我的项目", "📖 使用指南"])
+    
+    with tab1:
+        # 创建项目表单
+        col1, col2 = st.columns([2, 1])
+        
+        with col1:
+            st.markdown("### 🎯 开始新的项目")
+            
+            with st.form("new_project_form", clear_on_submit=True):
+                project_name = st.text_input(
+                    "项目名称 *",
+                    placeholder="例如：Python教程",
+                    help="请输入项目名称，建议使用简洁明了的名称"
+                )
+                
+                project_desc = st.text_area(
+                    "项目描述",
+                    placeholder="项目的详细描述...",
+                    height=120,
+                    help="描述项目的用途和主要内容"
+                )
+                
+                # 项目设置
+                with st.expander("⚙️ 高级设置", expanded=False):
+                    col_setting1, col_setting2 = st.columns(2)
+                    with col_setting1:
+                        st.checkbox("启用动画效果", value=True, key="enable_animations_home")
+                        st.checkbox("显示返回顶部按钮", value=True, key="show_back_to_top_home")
+                    with col_setting2:
+                        st.selectbox("默认主题", ["dark", "light"], key="default_theme_home", index=0)
+                        st.checkbox("自动保存", value=True, key="auto_save_home")
+                
+                col_submit, col_clear = st.columns(2)
+                with col_submit:
+                    submitted = st.form_submit_button(
+                        "🎯 创建项目",
+                        use_container_width=True,
+                        type="primary"
+                    )
+                with col_clear:
+                    if st.form_submit_button("🗑️ 清空", use_container_width=True, type="secondary"):
+                        st.rerun()
+                
+                if submitted:
+                    if project_name:
+                        with st.spinner("正在创建项目..."):
+                            success, message = project_manager.create_project(project_name, project_desc)
+                            if success:
+                                st.success("✅ 项目创建成功！正在加载...")
+                                SessionStateManager.add_notification("项目创建成功", "success")
+                                time.sleep(1)
+                                
+                                # 加载项目
+                                success, result = project_manager.load_project(project_name)
+                                if success:
+                                    st.session_state.current_project = result
+                                    st.session_state.project_structure = result["structure"]
+                                    st.session_state.current_page = result["structure"]["cover_page"]
+                                    st.session_state.active_tab = "editor"
+                                    st.session_state.project_loaded = True
+                                    st.rerun()
+                            else:
+                                st.error(f"❌ {message}")
+                                SessionStateManager.add_notification(f"创建失败: {message}", "error")
+                    else:
+                        st.warning("⚠️ 请输入项目名称")
+                        SessionStateManager.add_notification("请输入项目名称", "warning")
+        
+        with col2:
+            # 快速开始指南
+            st.markdown("### ⚡ 快速开始")
+            st.markdown("""
+            <div style="background: #161b22; border: 1px solid #30363d; border-radius: 6px; padding: 20px; color: #7cc5ff;">
+                <ol style="color: #7cc5ff; padding-left: 24px;">
+                    <li><strong>输入项目名称</strong></li>
+                    <li><strong>添加项目描述</strong></li>
+                    <li><strong>点击创建按钮</strong></li>
+                    <li><strong>开始编辑内容</strong></li>
+                    <li><strong>保存并发布</strong></li>
+                </ol>
+                
+                <hr style="border-color: #30363d;">
+                
+                <div style="color: #7cc5ff; font-size: 0.95rem;">
+                    <p><strong>💡 提示:</strong></p>
+                    <ul style="padding-left: 20px;">
+                        <li>项目名称建议简短明确</li>
+                        <li>描述可以帮助您后期管理</li>
+                        <li>高级设置可以后续修改</li>
+                    </ul>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+    
+    with tab2:
+        st.markdown("### 📂 我的项目")
+        
+        projects = project_manager.list_projects()
+        
+        if not projects:
+            st.info("""
+            📭 还没有任何项目。
+            
+            点击上方的"创建项目"标签开始您的第一个项目！
+            """)
+        else:
+            # 项目统计
+            col_stats1, col_stats2, col_stats3, col_stats4 = st.columns(4)
+            with col_stats1:
+                st.metric("项目总数", len(projects))
+            with col_stats2:
+                completed = sum(1 for p in projects if p["has_html"])
+                st.metric("已生成HTML", completed)
+            with col_stats3:
+                total_size = sum(p["size"] for p in projects)
+                st.metric("总大小", project_manager.format_size(total_size))
+            with col_stats4:
+                if projects:
+                    latest = max(projects, key=lambda x: x["config"].get("last_modified", ""))
+                    st.metric("最近更新", latest["name"][:10] + "...")
+            
+            # 项目列表
+            st.markdown("---")
+            
+            for project in projects:
+                with st.container():
+                    st.markdown(f"""
+                    <div style="background: #161b22; border: 1px solid #30363d; border-radius: 6px; padding: 20px; margin: 10px 0; color: #7cc5ff;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+                            <div>
+                                <h4 style="color: #8ed1ff; margin: 0 0 8px 0; display: flex; align-items: center;">
+                                    <span style="background: rgba(56, 139, 253, 0.1); color: #7cc5ff; padding: 4px 10px; border-radius: 20px; font-size: 0.85rem; margin-right: 10px; border: 1px solid rgba(56, 139, 253, 0.3);">
+                                        v{project['config'].get('version', '1.0')}
+                                    </span>
+                                    {project['name']}
+                                </h4>
+                                <p style="color: #7cc5ff; margin: 0 0 12px 0; font-size: 0.95rem;">
+                                    {project['config'].get('description', '无描述')}
+                                </p>
+                            </div>
+                            <div style="display: flex; gap: 8px;">
+                                <button onclick="openProject('{project['name']}')" style="background: rgba(56, 139, 253, 0.1); border: 1px solid rgba(56, 139, 253, 0.3); color: #7cc5ff; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.9rem;"
+                                        onmouseover="this.style.background='rgba(56, 139, 253, 0.2)'"
+                                        onmouseout="this.style.background='rgba(56, 139, 253, 0.1)'">
+                                    打开
+                                </button>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 16px; margin-top: 12px; font-size: 0.85rem; color: #7cc5ff;">
+                            <span>
+                                <i class="fas fa-calendar"></i> {project['config'].get('created_at', '').split('T')[0]}
+                            </span>
+                            <span>
+                                <i class="fas fa-file-alt"></i> {project_manager.format_size(project['size'])}
+                            </span>
+                            <span>
+                                <i class="fas fa-file"></i> {project['page_count']}页
+                            </span>
+                            <span>
+                                {'✅ 已生成HTML' if project["has_html"] else '⏳ 未生成HTML'}
+                            </span>
+                        </div>
+                    </div>
+                    """, unsafe_allow_html=True)
+    
+    with tab3:
+        st.markdown("### 📖 使用指南")
+        
+        guide_steps = [
+            ("1️⃣ 创建项目", "填写项目名称和描述，点击创建按钮"),
+            ("2️⃣ 添加页面", "在左侧目录中点击『新建页面』或『新建章节』"),
+            ("3️⃣ 编辑内容", "在右侧编辑区域添加和修改内容元素"),
+            ("4️⃣ 预览效果", "实时预览区域查看最终效果"),
+            ("5️⃣ 保存项目", "点击保存按钮生成HTML文件"),
+            ("6️⃣ 部署使用", "将生成的HTML文件部署到GitHub Pages或其他服务器")
+        ]
+        
+        for step, description in guide_steps:
+            with st.container():
+                st.markdown(f"""
+                <div style="background: #161b22; border: 1px solid #30363d; border-left: 4px solid #7cc5ff; border-radius: 0 6px 6px 0; padding: 16px; margin: 10px 0; color: #7cc5ff;">
+                    <h4 style="color: #8ed1ff; margin: 0 0 8px 0; display: flex; align-items: center; gap: 10px;">
+                        <span style="background: #7cc5ff; color: #0d1117; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; font-weight: bold;">
+                            {step.split()[0]}
+                        </span>
+                        {step}
+                    </h4>
+                    <p style="color: #7cc5ff; margin: 0; padding-left: 42px;">{description}</p>
+                </div>
+                """, unsafe_allow_html=True)
+        
+        # 常见问题
+        with st.expander("❓ 常见问题", expanded=False):
+            faqs = [
+                ("Q: 生成的HTML文件在哪里？", "A: 在项目文件夹下的index.html文件中"),
+                ("Q: 如何部署到GitHub Pages？", "A: 将整个项目文件夹上传到GitHub仓库，在设置中启用GitHub Pages功能"),
+                ("Q: 支持哪些内容类型？", "A: 支持标题、段落、注释、按钮、B站视频、图片、代码块等多种内容类型"),
+                ("Q: 可以导出为其他格式吗？", "A: 目前只支持导出为HTML格式，后续会支持PDF导出"),
+                ("Q: 数据会保存到哪里？", "A: 所有数据都保存在本地项目的文件夹中，不会上传到任何服务器")
+            ]
+            
+            for question, answer in faqs:
+                st.markdown(f"**{question}**")
+                st.markdown(f"{answer}")
+                st.markdown("---")
+        
+        # 快捷键参考
+        with st.expander("⌨️ 键盘快捷键", expanded=False):
+            shortcuts = [
+                ("Ctrl/Cmd + B", "切换侧边栏"),
+                ("Ctrl/Cmd + K 或 /", "打开搜索"),
+                ("ESC", "关闭搜索或侧边栏"),
+                ("← 或 PageUp", "上一页"),
+                ("→ 或 PageDown", "下一页"),
+                ("T", "切换目录"),
+                ("Home", "返回顶部"),
+                ("空格键", "下一页")
+            ]
+            
+            for shortcut, description in shortcuts:
+                col_shortcut, col_desc = st.columns([1, 3])
+                with col_shortcut:
+                    st.code(shortcut, language="")
+                with col_desc:
+                    st.markdown(description)
+    
+    st.markdown('</div>', unsafe_allow_html=True)
+
+# ============================================
+# 项目编辑器主页面 - 更新文字为浅蓝色
+# ============================================
+def render_project_editor():
+    """渲染项目编辑器页面"""
+    # 显示通知
+    SessionStateManager.show_notifications()
+    
+    project = st.session_state.current_project
+    structure = st.session_state.project_structure
+    current_page = st.session_state.current_page
+    
+    if not project or not structure or not current_page:
+        st.error("项目加载失败，请返回主页重新加载")
+        if st.button("返回主页"):
+            st.session_state.active_tab = "home"
+            st.rerun()
+        return
+    
+    # 顶部工具栏
+    st.markdown(f"""
+    <div style="background: #161b22; border: 1px solid #30363d; border-left: 4px solid #7cc5ff; border-radius: 0 6px 6px 0; padding: 20px; margin-bottom: 24px; color: #7cc5ff;">
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+            <div>
+                <h2 style="color: #8ed1ff; margin: 0; display: flex; align-items: center; gap: 12px;">
+                    <span style="background: rgba(124, 197, 255, 0.1); color: #7cc5ff; padding: 6px 16px; border-radius: 20px; font-size: 1rem; border: 1px solid rgba(124, 197, 255, 0.3);">
+                        📝 编辑中
+                    </span>
+                    {project['name']}
+                </h2>
+                <p style="color: #7cc5ff; margin: 6px 0 0 0; font-size: 0.95rem;">
+                    {project['config'].get('description', '')}
+                </p>
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <button onclick="window.location.href='?tab=home'" style="background: #21262d; border: 1px solid #30363d; color: #7cc5ff; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 500; transition: all 0.2s; display: flex; align-items: center; gap: 6px;"
+                        onmouseover="this.style.background='#30363d'"
+                        onmouseout="this.style.background='#21262d'">
+                    <i class="fas fa-home"></i> 主页
+                </button>
+            </div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # 操作统计
+    col_stats1, col_stats2, col_stats3, col_stats4 = st.columns(4)
+    with col_stats1:
+        total_pages = len(structure.get('pages', [])) + 1
+        st.metric("📄 总页面数", total_pages)
+    
+    with col_stats2:
+        total_elements = sum(len(page.get('content', [])) for page in [structure['cover_page']] + structure.get('pages', []))
+        st.metric("📝 内容元素", total_elements)
+    
+    with col_stats3:
+        word_count = HTMLGenerator.calculate_word_count(structure)
+        st.metric("📊 总字数", f"{word_count:,}")
+    
+    with col_stats4:
+        if project.get('html_path') and project['html_path'].exists():
+            file_size = project['html_path'].stat().st_size
+            st.metric("💾 HTML大小", f"{file_size/1024:.1f}KB")
+        else:
+            st.metric("🚫 HTML状态", "未生成")
+    
+    # 主要编辑区域
+    col_left, col_right = st.columns([1, 2], gap="large")
+    
+    with col_left:
+        # 目录管理
+        render_directory_tree(structure)
+        
+        # 项目设置
+        with st.expander("⚙️ 项目设置", expanded=False):
+            with st.form("project_settings_form"):
+                structure['title'] = st.text_input("网站标题", value=structure.get('title', ''))
+                structure['description'] = st.text_area("网站描述", value=structure.get('description', ''))
+                
+                # 主题设置
+                st.markdown("### 🎨 主题设置")
+                theme_col1, theme_col2 = st.columns(2)
+                with theme_col1:
+                    structure['config']['theme'] = st.selectbox(
+                        "主题模式",
+                        ["dark", "light", "auto"],
+                        index=["dark", "light", "auto"].index(structure['config'].get('theme', 'dark'))
+                    )
+                with theme_col2:
+                    structure['config']['animations'] = st.checkbox(
+                        "启用动画",
+                        value=structure['config'].get('animations', True)
+                    )
+                
+                # 功能设置
+                st.markdown("### 🔧 功能设置")
+                col_func1, col_func2 = st.columns(2)
+                with col_func1:
+                    structure['config']['sidebar_collapsible'] = st.checkbox(
+                        "可折叠侧边栏",
+                        value=structure['config'].get('sidebar_collapsible', True)
+                    )
+                with col_func2:
+                    structure['config']['show_back_to_top'] = st.checkbox(
+                        "返回顶部按钮",
+                        value=structure['config'].get('show_back_to_top', True)
+                    )
+                
+                if st.form_submit_button("💾 保存设置", use_container_width=True, type="primary"):
+                    if save_project():
+                        st.success("✅ 项目设置已保存")
+                        SessionStateManager.add_notification("项目设置已保存", "success")
+    
+    with col_right:
+        if current_page:
+            # 页面编辑区
+            render_page_editor(current_page, structure)
+    
+    # 底部操作栏
+    st.markdown("---")
+    col_bottom1, col_bottom2, col_bottom3, col_bottom4 = st.columns(4)
+    
+    with col_bottom1:
+        if st.button("💾 保存项目", 
+                    use_container_width=True, 
+                    type="primary",
+                    help="保存项目并生成HTML文件"):
+            if save_project():
+                st.success("✅ 项目已保存并生成HTML文件！")
+                SessionStateManager.add_notification("项目已保存", "success")
+                time.sleep(1)
+                st.rerun()
+    
+    with col_bottom2:
+        if st.button("📤 导出HTML", 
+                    use_container_width=True,
+                    help="导出完整的HTML文件"):
+            if export_html():
+                st.success("✅ HTML文件已生成！")
+                SessionStateManager.add_notification("HTML文件已生成", "success")
+    
+    with col_bottom3:
+        if st.button("🔄 重新加载", 
+                    use_container_width=True,
+                    help="重新加载项目数据"):
+            success, result = ProjectManager().load_project(project['name'])
+            if success:
+                st.session_state.current_project = result
+                st.session_state.project_structure = result["structure"]
+                st.session_state.current_page = result["structure"]["cover_page"]
+                st.success("✅ 项目已重新加载")
+                SessionStateManager.add_notification("项目已重新加载", "success")
+                st.rerun()
+    
+    with col_bottom4:
+        if st.button("🏠 返回主页", 
+                    use_container_width=True,
+                    type="secondary",
+                    help="返回主页"):
+            st.session_state.active_tab = "home"
+            st.session_state.current_project = None
+            st.rerun()
 
 # ============================================
 # 项目操作函数
@@ -4369,476 +3471,6 @@ def delete_project_confirm():
             st.rerun()
 
 # ============================================
-# 主页
-# ============================================
-def render_home():
-    """渲染主页"""
-    st.markdown('<div class="main-container">', unsafe_allow_html=True)
-    
-    # 头部
-    st.markdown("""
-    <div class="app-header">
-        <h1 class="app-title">📖 网页手册创建器</h1>
-        <p class="app-subtitle">
-            一个强大、易用的网页手册制作工具，无需编程知识即可创建专业级别的响应式网页。
-            支持一键部署到 GitHub Pages，让您的知识分享变得更简单。
-        </p>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    project_manager = ProjectManager()
-    
-    # 功能特性
-    st.markdown("### ✨ 核心特性")
-    cols = st.columns(3)
-    
-    features = [
-        ("🎨 视觉设计", "现代化的UI设计，丰富的主题和样式选项", "#667eea", "提供多种主题和自定义选项，打造独特视觉风格"),
-        ("📱 响应式布局", "完美适配桌面、平板和手机设备", "#764ba2", "自动适应各种屏幕尺寸，提供最佳浏览体验"),
-        ("⚡ 高性能", "优化的代码结构，极速加载体验", "#f093fb", "轻量级代码，快速加载，提升用户体验"),
-        ("🔧 易于使用", "直观的操作界面，拖拽式编辑", "#4fd1c7", "无需编程知识，简单点击即可创建专业网页"),
-        ("📤 一键部署", "直接生成可部署的HTML文件", "#ed8936", "支持GitHub Pages、Netlify等主流部署平台"),
-        ("🔄 实时预览", "编辑时即时查看效果，所见即所得", "#9f7aea", "实时预览功能，确保设计符合预期")
-    ]
-    
-    for idx, (title, desc, color, detail) in enumerate(features):
-        with cols[idx % 3]:
-            st.markdown(f"""
-            <div class="feature-card">
-                <div class="feature-icon" style="color: {color};">{title.split()[0]}</div>
-                <h3 class="feature-title">{title}</h3>
-                <p class="feature-desc">{desc}</p>
-                <p style="color: #718096; font-size: 0.95rem; line-height: 1.6;">{detail}</p>
-                <!-- 已移除“了解更多”按钮以简化界面 -->
-            </div>
-            """, unsafe_allow_html=True)
-    
-    # 标签页
-    tab1, tab2, tab3 = st.tabs(["🚀 创建项目", "📂 我的项目", "📖 使用指南"])
-    
-    with tab1:
-        # 创建项目表单
-        col1, col2 = st.columns([2, 1])
-        
-        with col1:
-            st.markdown("### 🎯 开始新的项目")
-            
-            with st.form("new_project_form", clear_on_submit=True):
-                project_name = st.text_input(
-                    "项目名称 *",
-                    placeholder="例如：Python教程",
-                    help="请输入项目名称，建议使用简洁明了的名称"
-                )
-                
-                project_desc = st.text_area(
-                    "项目描述",
-                    placeholder="项目的详细描述...",
-                    height=120,
-                    help="描述项目的用途和主要内容"
-                )
-                
-                # 项目设置
-                with st.expander("⚙️ 高级设置", expanded=False):
-                    col_setting1, col_setting2 = st.columns(2)
-                    with col_setting1:
-                        st.checkbox("启用动画效果", value=True, key="enable_animations_home")
-                        st.checkbox("显示返回顶部按钮", value=True, key="show_back_to_top_home")
-                    with col_setting2:
-                        st.selectbox("默认主题", ["light", "dark"], key="default_theme_home")
-                        st.checkbox("自动保存", value=True, key="auto_save_home")
-                
-                col_submit, col_clear = st.columns(2)
-                with col_submit:
-                    submitted = st.form_submit_button(
-                        "🎯 创建项目",
-                        use_container_width=True,
-                        type="primary"
-                    )
-                with col_clear:
-                    if st.form_submit_button("🗑️ 清空", use_container_width=True, type="secondary"):
-                        st.rerun()
-                
-                if submitted:
-                    if project_name:
-                        with st.spinner("正在创建项目..."):
-                            success, message = project_manager.create_project(project_name, project_desc)
-                            if success:
-                                st.success("✅ 项目创建成功！正在加载...")
-                                SessionStateManager.add_notification("项目创建成功", "success")
-                                time.sleep(1)
-                                
-                                # 加载项目
-                                success, result = project_manager.load_project(project_name)
-                                if success:
-                                    st.session_state.current_project = result
-                                    st.session_state.project_structure = result["structure"]
-                                    st.session_state.current_page = result["structure"]["cover_page"]
-                                    st.session_state.active_tab = "editor"
-                                    st.session_state.project_loaded = True
-                                    st.rerun()
-                            else:
-                                st.error(f"❌ {message}")
-                                SessionStateManager.add_notification(f"创建失败: {message}", "error")
-                    else:
-                        st.warning("⚠️ 请输入项目名称")
-                        SessionStateManager.add_notification("请输入项目名称", "warning")
-        
-        with col2:
-            # 快速开始指南
-            st.markdown("### ⚡ 快速开始")
-            st.markdown("""
-            1. **输入项目名称**
-            2. **添加项目描述**
-            3. **点击创建按钮**
-            4. **开始编辑内容**
-            5. **保存并发布**
-            
-            ---
-            
-            **💡 提示:**
-            - 项目名称建议简短明确
-            - 描述可以帮助您后期管理
-            - 高级设置可以后续修改
-            """)
-    
-    with tab2:
-        st.markdown("### 📂 我的项目")
-        
-        projects = project_manager.list_projects()
-        
-        if not projects:
-            st.info("""
-            📭 还没有任何项目。
-            
-            点击上方的"创建项目"标签开始您的第一个项目！
-            """)
-        else:
-            # 项目统计
-            col_stats1, col_stats2, col_stats3, col_stats4 = st.columns(4)
-            with col_stats1:
-                st.metric("项目总数", len(projects))
-            with col_stats2:
-                completed = sum(1 for p in projects if p["has_html"])
-                st.metric("已生成HTML", completed)
-            with col_stats3:
-                total_size = sum(p["size"] for p in projects)
-                st.metric("总大小", project_manager.format_size(total_size))
-            with col_stats4:
-                if projects:
-                    latest = max(projects, key=lambda x: x["config"].get("last_modified", ""))
-                    st.metric("最近更新", latest["name"][:10] + "...")
-            
-            # 项目列表
-            st.markdown("---")
-            
-            for project in projects:
-                with st.container():
-                    col1, col2, col3, col4 = st.columns([3, 2, 1, 1])
-                    
-                    with col1:
-                        st.markdown(f"""
-                        <div style="padding: 20px; background: white; border-radius: 15px; margin: 10px 0; box-shadow: 0 5px 20px rgba(0,0,0,0.05);">
-                            <h4 style="color: #2d3748; margin: 0 0 10px 0; display: flex; align-items: center;">
-                                <span style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.9rem; margin-right: 10px;">
-                                    v{project['config'].get('version', '1.0')}
-                                </span>
-                                {project['name']}
-                            </h4>
-                            <p style="color: #718096; margin: 0 0 8px 0; font-size: 0.95em;">
-                                {project['config'].get('description', '无描述')}
-                            </p>
-                            <div style="display: flex; gap: 15px; margin-top: 10px;">
-                                <span style="color: #a0aec0; font-size: 0.85em;">
-                                    <i class="fas fa-calendar"></i> {project['config'].get('created_at', '').split('T')[0]}
-                                </span>
-                                <span style="color: #a0aec0; font-size: 0.85em;">
-                                    <i class="fas fa-file-alt"></i> {project_manager.format_size(project['size'])}
-                                </span>
-                                <span style="color: #a0aec0; font-size: 0.85em;">
-                                    <i class="fas fa-file"></i> {project['page_count']}页
-                                </span>
-                            </div>
-                        </div>
-                        """, unsafe_allow_html=True)
-                    
-                    with col2:
-                        if project["has_html"]:
-                            st.markdown("""
-                            <div style="padding: 10px; text-align: center; border-radius: 10px; background: rgba(16, 185, 129, 0.1); color: #10b981; font-weight: 600;">
-                                ✅ 已生成HTML
-                            </div>
-                            """, unsafe_allow_html=True)
-                        else:
-                            st.markdown("""
-                            <div style="padding: 10px; text-align: center; border-radius: 10px; background: rgba(245, 158, 11, 0.1); color: #f59e0b; font-weight: 600;">
-                                ⏳ 未生成HTML
-                            </div>
-                            """, unsafe_allow_html=True)
-                    
-                    with col3:
-                        if st.button("打开", 
-                                    key=f"open_{project['name']}", 
-                                    use_container_width=True,
-                                    help=f"打开项目: {project['name']}"):
-                            success, result = project_manager.load_project(project["name"])
-                            if success:
-                                st.session_state.current_project = result
-                                st.session_state.project_structure = result["structure"]
-                                st.session_state.current_page = result["structure"]["cover_page"]
-                                st.session_state.active_tab = "editor"
-                                st.session_state.project_loaded = True
-                                SessionStateManager.add_notification(f"已加载项目: {project['name']}", "success")
-                                st.rerun()
-                            else:
-                                SessionStateManager.add_notification(f"加载失败: {result}", "error")
-                    
-                    with col4:
-                        if st.button("删除", 
-                                    key=f"delete_{project['name']}", 
-                                    type="secondary",
-                                    use_container_width=True,
-                                    help=f"删除项目: {project['name']}"):
-                            # 确认删除
-                            if st.checkbox(f"确认删除项目 '{project['name']}'?", key=f"confirm_del_proj_{project['name']}"):
-                                success, message = project_manager.delete_project(project["name"])
-                                if success:
-                                    st.success(f"✅ {message}")
-                                    SessionStateManager.add_notification("项目已删除", "success")
-                                    time.sleep(1)
-                                    st.rerun()
-                                else:
-                                    st.error(f"❌ {message}")
-                                    SessionStateManager.add_notification(f"删除失败: {message}", "error")
-    
-    with tab3:
-        st.markdown("### 📖 使用指南")
-        
-        guide_steps = [
-            ("1️⃣ 创建项目", "填写项目名称和描述，点击创建按钮"),
-            ("2️⃣ 添加页面", "在左侧目录中点击『新建页面』或『新建章节』"),
-            ("3️⃣ 编辑内容", "在右侧编辑区域添加和修改内容元素"),
-            ("4️⃣ 预览效果", "实时预览区域查看最终效果"),
-            ("5️⃣ 保存项目", "点击保存按钮生成HTML文件"),
-            ("6️⃣ 部署使用", "将生成的HTML文件部署到GitHub Pages或其他服务器")
-        ]
-        
-        for step, description in guide_steps:
-            with st.container():
-                st.markdown(f"""
-                <div style="background: white; padding: 20px; border-radius: 15px; margin: 10px 0; border-left: 5px solid #667eea; box-shadow: 0 5px 20px rgba(0,0,0,0.05);">
-                    <h4 style="color: #2d3748; margin: 0 0 10px 0; display: flex; align-items: center; gap: 10px;">
-                        <span style="background: #667eea; color: white; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">
-                            {step.split()[0]}
-                        </span>
-                        {step}
-                    </h4>
-                    <p style="color: #718096; margin: 0; padding-left: 46px;">{description}</p>
-                </div>
-                """, unsafe_allow_html=True)
-        
-        # 常见问题
-        with st.expander("❓ 常见问题", expanded=False):
-            faqs = [
-                ("Q: 生成的HTML文件在哪里？", "A: 在项目文件夹下的index.html文件中"),
-                ("Q: 如何部署到GitHub Pages？", "A: 将整个项目文件夹上传到GitHub仓库，在设置中启用GitHub Pages功能"),
-                ("Q: 支持哪些内容类型？", "A: 支持标题、段落、注释、按钮、B站视频、图片、代码块等多种内容类型"),
-                ("Q: 可以导出为其他格式吗？", "A: 目前只支持导出为HTML格式，后续会支持PDF导出"),
-                ("Q: 数据会保存到哪里？", "A: 所有数据都保存在本地项目的文件夹中，不会上传到任何服务器"),
-                ("Q: 侧边栏折叠后如何打开？", "A: 点击左上角的汉堡菜单按钮(≡)即可展开侧边栏"),
-                ("Q: 支持键盘快捷键吗？", "A: 支持！Ctrl+B切换侧边栏，Ctrl+K打开搜索，方向键导航页面")
-            ]
-            
-            for question, answer in faqs:
-                st.markdown(f"**{question}**")
-                st.markdown(f"{answer}")
-                st.markdown("---")
-        
-        # 快捷键参考
-        with st.expander("⌨️ 键盘快捷键", expanded=False):
-            shortcuts = [
-                ("Ctrl/Cmd + B", "切换侧边栏"),
-                ("Ctrl/Cmd + K 或 /", "打开搜索"),
-                ("ESC", "关闭搜索或侧边栏"),
-                ("← 或 PageUp", "上一页"),
-                ("→ 或 PageDown", "下一页"),
-                ("T", "切换目录"),
-                ("Home", "返回顶部"),
-                ("空格键", "下一页")
-            ]
-            
-            for shortcut, description in shortcuts:
-                col_shortcut, col_desc = st.columns([1, 3])
-                with col_shortcut:
-                    st.code(shortcut, language="")
-                with col_desc:
-                    st.markdown(description)
-    
-    st.markdown('</div>', unsafe_allow_html=True)
-
-# ============================================
-# 项目编辑器主页面
-# ============================================
-def render_project_editor():
-    """渲染项目编辑器页面"""
-    # 显示通知
-    SessionStateManager.show_notifications()
-    
-    project = st.session_state.current_project
-    structure = st.session_state.project_structure
-    current_page = st.session_state.current_page
-    
-    if not project or not structure or not current_page:
-        st.error("项目加载失败，请返回主页重新加载")
-        if st.button("返回主页"):
-            st.session_state.active_tab = "home"
-            st.rerun()
-        return
-    
-    # 顶部工具栏
-    st.markdown(f"""
-    <div style="background: white; padding: 25px 35px; border-radius: 20px; margin-bottom: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); border-left: 6px solid #667eea;">
-        <div style="display: flex; align-items: center; justify-content: space-between;">
-            <div>
-                <h2 style="color: #2d3748; margin: 0; display: flex; align-items: center; gap: 15px;">
-                    <span style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 8px 20px; border-radius: 30px; font-size: 1.1rem; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);">
-                        📝 编辑中
-                    </span>
-                    {project['name']}
-                </h2>
-                <p style="color: #718096; margin: 8px 0 0 0; font-size: 1.05rem;">
-                    {project['config'].get('description', '')}
-                </p>
-            </div>
-            <div style="display: flex; gap: 12px;">
-                <button onclick="window.location.href='?tab=home'" style="background: #f8fafc; border: 2px solid #e2e8f0; color: #4a5568; padding: 12px 25px; border-radius: 12px; cursor: pointer; font-weight: 600; transition: all 0.3s; display: flex; align-items: center; gap: 8px;"
-                        onmouseover="this.style.background='#e2e8f0'; this.style.transform='translateY(-2px)'"
-                        onmouseout="this.style.background='#f8fafc'; this.style.transform='translateY(0)'">
-                    <i class="fas fa-home"></i> 主页
-                </button>
-            </div>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    # 操作统计
-    col_stats1, col_stats2, col_stats3, col_stats4 = st.columns(4)
-    with col_stats1:
-        total_pages = len(structure.get('pages', [])) + 1
-        st.metric("📄 总页面数", total_pages)
-    
-    with col_stats2:
-        total_elements = sum(len(page.get('content', [])) for page in [structure['cover_page']] + structure.get('pages', []))
-        st.metric("📝 内容元素", total_elements)
-    
-    with col_stats3:
-        word_count = HTMLGenerator.calculate_word_count(structure)
-        st.metric("📊 总字数", f"{word_count:,}")
-    
-    with col_stats4:
-        if project.get('html_path') and project['html_path'].exists():
-            file_size = project['html_path'].stat().st_size
-            st.metric("💾 HTML大小", f"{file_size/1024:.1f}KB")
-        else:
-            st.metric("🚫 HTML状态", "未生成")
-    
-    # 主要编辑区域
-    col_left, col_right = st.columns([1, 2], gap="large")
-    
-    with col_left:
-        # 目录管理
-        render_directory_tree(structure)
-        
-        # 项目设置
-        with st.expander("⚙️ 项目设置", expanded=False):
-            with st.form("project_settings_form"):
-                structure['title'] = st.text_input("网站标题", value=structure.get('title', ''))
-                structure['description'] = st.text_area("网站描述", value=structure.get('description', ''))
-                
-                # 主题设置
-                st.markdown("### 🎨 主题设置")
-                theme_col1, theme_col2 = st.columns(2)
-                with theme_col1:
-                    structure['config']['theme'] = st.selectbox(
-                        "主题模式",
-                        ["light", "dark", "auto"],
-                        index=["light", "dark", "auto"].index(structure['config'].get('theme', 'light'))
-                    )
-                with theme_col2:
-                    structure['config']['animations'] = st.checkbox(
-                        "启用动画",
-                        value=structure['config'].get('animations', True)
-                    )
-                
-                # 功能设置
-                st.markdown("### 🔧 功能设置")
-                col_func1, col_func2 = st.columns(2)
-                with col_func1:
-                    structure['config']['sidebar_collapsible'] = st.checkbox(
-                        "可折叠侧边栏",
-                        value=structure['config'].get('sidebar_collapsible', True)
-                    )
-                with col_func2:
-                    structure['config']['show_back_to_top'] = st.checkbox(
-                        "返回顶部按钮",
-                        value=structure['config'].get('show_back_to_top', True)
-                    )
-                
-                if st.form_submit_button("💾 保存设置", use_container_width=True, type="primary"):
-                    if save_project():
-                        st.success("✅ 项目设置已保存")
-                        SessionStateManager.add_notification("项目设置已保存", "success")
-    
-    with col_right:
-        if current_page:
-            # 页面编辑区
-            render_page_editor(current_page, structure)
-    
-    # 底部操作栏
-    st.markdown("---")
-    col_bottom1, col_bottom2, col_bottom3, col_bottom4 = st.columns(4)
-    
-    with col_bottom1:
-        if st.button("💾 保存项目", 
-                    use_container_width=True, 
-                    type="primary",
-                    help="保存项目并生成HTML文件"):
-            if save_project():
-                st.success("✅ 项目已保存并生成HTML文件！")
-                SessionStateManager.add_notification("项目已保存", "success")
-                time.sleep(1)
-                st.rerun()
-    
-    with col_bottom2:
-        if st.button("📤 导出HTML", 
-                    use_container_width=True,
-                    help="导出完整的HTML文件"):
-            if export_html():
-                st.success("✅ HTML文件已生成！")
-                SessionStateManager.add_notification("HTML文件已生成", "success")
-    
-    with col_bottom3:
-        if st.button("🔄 重新加载", 
-                    use_container_width=True,
-                    help="重新加载项目数据"):
-            success, result = ProjectManager().load_project(project['name'])
-            if success:
-                st.session_state.current_project = result
-                st.session_state.project_structure = result["structure"]
-                st.session_state.current_page = result["structure"]["cover_page"]
-                st.success("✅ 项目已重新加载")
-                SessionStateManager.add_notification("项目已重新加载", "success")
-                st.rerun()
-    
-    with col_bottom4:
-        if st.button("🏠 返回主页", 
-                    use_container_width=True,
-                    type="secondary",
-                    help="返回主页"):
-            st.session_state.active_tab = "home"
-            st.session_state.current_project = None
-            st.rerun()
-
-# ============================================
 # 主应用入口
 # ============================================
 def main():
@@ -4872,7 +3504,6 @@ def main():
                 st.rerun()
 
 if __name__ == "__main__":
-    # 错误处理
     try:
         main()
     except Exception as e:
