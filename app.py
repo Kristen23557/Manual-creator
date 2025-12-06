@@ -218,6 +218,8 @@ def load_css():
     /* 目录树 - GitHub 风格 */
     .directory-tree {
         padding: 0 16px;
+        overflow-y: auto;
+        overflow-x: hidden;  /* 移除横向滚动条 */
     }
     
     .tree-item {
@@ -930,102 +932,6 @@ def load_css():
     </style>
     """, unsafe_allow_html=True)
 
-# 逐页样式微调覆盖：封面、编辑器、元素、预览与响应式优化
-st.markdown("""
-    <style>
-    :root {
-        --base-font-size: 16px;
-        --control-padding: 12px;
-        --accent: #667eea;
-    }
-
-    /* 基本字体与对比度 */
-    html, body, .stApp {
-        font-size: var(--base-font-size) !important;
-        color: #0f1720 !important;
-        background: #f7fafc !important;
-    }
-
-    /* 侧边栏：宽度、内边距与文本颜色 */
-    section[data-testid="stSidebar"] {
-        width: 300px !important;
-        min-width: 260px !important;
-        padding: 22px !important;
-        background: linear-gradient(180deg,#0b1220 0%,#172033 100%) !important;
-        color: #e6eef8 !important;
-    }
-    section[data-testid="stSidebar"] .sidebar-title,
-    section[data-testid="stSidebar"] .sidebar-subtitle,
-    section[data-testid="stSidebar"] .meta-item { color: #e6eef8 !important; }
-
-    /* 主内容区与侧边栏对齐 */
-    .content {
-        margin-left: 320px !important;
-        padding: 2.5rem 2.5rem !important;
-        max-width: calc(100% - 340px) !important;
-    }
-
-    .main-container { max-width: 1200px !important; margin: 0 auto; padding: 20px; }
-
-    /* 封面页和页面标题 */
-    #cover-page { padding: 24px !important; }
-    .page-title { font-size: 2.2rem !important; font-weight: 900 !important; color: #0f172a !important; margin-bottom: 1rem !important; }
-
-    /* 编辑器容器：更紧凑且具卡片感 */
-    .editor-container {
-        padding: 22px !important;
-        border-radius: 14px !important;
-        background: #ffffff !important;
-        box-shadow: 0 10px 30px rgba(2,6,23,0.06) !important;
-    }
-
-    .editor-form input, .editor-form textarea, .stTextInput input, .stTextArea textarea {
-        font-size: 1rem !important;
-        padding: 10px !important;
-        border-radius: 8px !important;
-        border: 1px solid #e6e9ef !important;
-        background: #ffffff !important;
-        color: #0f1720 !important;
-    }
-
-    /* 内容元素卡片样式 */
-    .content-element {
-        padding: 18px !important;
-        border-radius: 12px !important;
-        background: linear-gradient(180deg,#ffffff,#fbfdff) !important;
-        border: 1px solid #eef2f7 !important;
-        margin-bottom: 16px !important;
-    }
-
-    .content-element .heading { font-weight: 800 !important; color: #0f172a !important; }
-    .heading-1 { font-size: 1.9rem !important; }
-    .heading-2 { font-size: 1.5rem !important; }
-
-    .paragraph { font-size: 1rem !important; line-height: 1.8 !important; color: #111827 !important; padding: 12px !important; }
-    .note { font-style: italic; border-left: 4px solid var(--accent) !important; padding: 12px !important; background: #f8fafc !important; }
-
-    /* 预览容器 */
-    .preview-container { max-height: 68vh !important; overflow-y: auto !important; padding: 18px !important; border-radius: 12px !important; background: #ffffff !important; }
-
-    /* 目录树项与卡片 */
-    .tree-item { padding: 12px 16px !important; font-size: 1rem !important; border-radius: 10px !important; }
-    .feature-card { padding: 20px !important; border-radius: 12px !important; }
-
-    /* 按钮和控件尺寸 */
-    .stButton > button { padding: 10px 18px !important; font-size: 1rem !important; border-radius: 10px !important; }
-    .stTabs [data-baseweb="tab"] { padding: 10px 14px !important; font-size: 0.98rem !important; }
-    .icon-btn { width: 44px !important; height: 44px !important; }
-
-    /* 小屏幕自适应 */
-    @media (max-width: 1024px) {
-        section[data-testid="stSidebar"] { position: relative !important; width: 100% !important; min-width: 0 !important; }
-        .content { margin-left: 0 !important; padding: 1rem !important; }
-        .page-title { font-size: 1.6rem !important; }
-    }
-
-    </style>
-    """, unsafe_allow_html=True)
-
 # ============================================
 # 会话状态管理
 # ============================================
@@ -1120,7 +1026,6 @@ class HTMLGenerator:
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="{description}">
-    <meta name="author" content="{author}">
     <meta name="generator" content="网页手册创建器 v2.0">
     <meta name="theme-color" content="#0d1117">
     <title>{title}</title>
@@ -1161,11 +1066,6 @@ class HTMLGenerator:
                 </button>
                 <h1 class="sidebar-title">{title}</h1>
                 {description_html}
-                <div class="sidebar-meta">
-                    <span class="meta-item"><i class="fas fa-calendar"></i> {date}</span>
-                    <span class="meta-item"><i class="fas fa-user"></i> {author}</span>
-                    {word_count_html}
-                </div>
             </div>
             
             <div class="directory-tree" role="tree">
@@ -1175,27 +1075,10 @@ class HTMLGenerator:
                 </div>
                 {pages_html}
             </div>
-            
-            <div class="sidebar-footer">
-                <div class="theme-switcher">
-                    <button class="theme-btn light-btn" data-theme="light" aria-label="切换到浅色主题">
-                        <i class="fas fa-sun"></i> 浅色
-                    </button>
-                    <button class="theme-btn dark-btn" data-theme="dark" aria-label="切换到深色主题">
-                        <i class="fas fa-moon"></i> 深色
-                    </button>
-                </div>
-                <p class="copyright">© {year} {title} · 由网页手册创建器生成</p>
-            </div>
         </nav>
         
         <!-- 主内容区 -->
         <main class="content" id="content">
-            <!-- 阅读进度条 -->
-            <div class="reading-progress" id="readingProgress">
-                <div class="progress-bar"></div>
-            </div>
-            
             <!-- 页面容器 -->
             <div class="page active" id="cover-page" role="region" aria-label="封面页">
                 {cover_content}
@@ -1249,23 +1132,19 @@ class HTMLGenerator:
         # 获取数据
         title = structure.get("title", "网页手册")
         description = structure.get("description", "一个精美的手册网页")
-        author = "网页手册创建器用户"
         cover_title = structure["cover_page"].get("title", "封面")
-        year = datetime.now().year
-        date = datetime.now().strftime("%Y年%m月%d日")
         
         # 计算字数
         word_count = HTMLGenerator.calculate_word_count(structure)
-        word_count_html = f'<span class="meta-item"><i class="fas fa-file-word"></i> {word_count:,} 字</span>' if word_count > 0 else ''
         
         # 生成各部分内容
-        css = HTMLGenerator.generate_css(structure["config"])
+        css = HTMLGenerator.generate_css()
         additional_css = HTMLGenerator.generate_additional_css()
         description_html = f'<p class="sidebar-description">{description}</p>' if description else ''
         pages_html = HTMLGenerator.generate_pages_html(structure["pages"])
         pages_content = HTMLGenerator.generate_pages_content(structure["pages"])
         cover_content = HTMLGenerator.generate_page_content(structure["cover_page"])
-        javascript = HTMLGenerator.generate_javascript(structure["config"])
+        javascript = HTMLGenerator.generate_javascript()
         additional_js = HTMLGenerator.generate_additional_js()
         
         # 格式化HTML
@@ -1273,11 +1152,7 @@ class HTMLGenerator:
             title=title,
             description=description,
             description_html=description_html,
-            author=author,
             cover_title=cover_title,
-            year=year,
-            date=date,
-            word_count_html=word_count_html,
             css=css,
             additional_css=additional_css,
             pages_html=pages_html,
@@ -1318,27 +1193,17 @@ class HTMLGenerator:
         return word_count
     
     @staticmethod
-    def generate_css(config):
-        """生成CSS样式"""
-        theme = config.get("theme", "light")
-        primary_color = config.get("primary_color", "#667eea")
-        secondary_color = config.get("secondary_color", "#764ba2")
-        font_family = config.get("font_family", "Inter, 'Microsoft YaHei', sans-serif")
-        
-        if theme == "dark":
-            bg_color = "#0f172a"
-            text_color = "#f1f5f9"
-            sidebar_bg = "#1e293b"
-            card_bg = "#334155"
-            border_color = "#475569"
-            code_bg = "#1e293b"
-        else:
-            bg_color = "#f8fafc"
-            text_color = "#1e293b"
-            sidebar_bg = "#ffffff"
-            card_bg = "#ffffff"
-            border_color = "#e2e8f0"
-            code_bg = "#f1f5f9"
+    def generate_css():
+        """生成CSS样式 - 固定深色主题"""
+        bg_color = "#0f172a"
+        text_color = "#f1f5f9"
+        sidebar_bg = "#1e293b"
+        card_bg = "#334155"
+        border_color = "#475569"
+        code_bg = "#1e293b"
+        primary_color = "#667eea"
+        secondary_color = "#764ba2"
+        font_family = "Inter, 'Microsoft YaHei', sans-serif"
         
         return f"""
         :root {{
@@ -1483,30 +1348,11 @@ class HTMLGenerator:
             margin-bottom: 1.5rem;
         }}
         
-        .sidebar-meta {{
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-            margin-top: 1rem;
-        }}
-        
-        .meta-item {{
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.9rem;
-            color: var(--text-color);
-            opacity: 0.7;
-        }}
-        
-        .meta-item i {{
-            font-size: 1rem;
-        }}
-        
         /* 目录树 */
         .directory-tree {{
             flex: 1;
             overflow-y: auto;
+            overflow-x: hidden;  /* 移除横向滚动条 */
             padding-right: 0.5rem;
         }}
         
@@ -1572,56 +1418,6 @@ class HTMLGenerator:
         
         .tree-item:hover i {{
             transform: scale(1.2);
-        }}
-        
-        /* 侧边栏页脚 */
-        .sidebar-footer {{
-            padding-top: 2rem;
-            margin-top: 2rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-        }}
-        
-        .theme-switcher {{
-            display: flex;
-            gap: 0.75rem;
-            margin-bottom: 1.5rem;
-        }}
-        
-        .theme-btn {{
-            flex: 1;
-            padding: 0.75rem 1rem;
-            border: 2px solid var(--border-color);
-            border-radius: var(--radius-md);
-            background: var(--card-bg);
-            color: var(--text-color);
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 0.95rem;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-        }}
-        
-        .theme-btn:hover {{
-            border-color: var(--primary-color);
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
-        }}
-        
-        .theme-btn.active {{
-            background: var(--primary-color);
-            color: white;
-            border-color: var(--primary-color);
-        }}
-        
-        .copyright {{
-            font-size: 0.9rem;
-            color: var(--text-color);
-            opacity: 0.6;
-            text-align: center;
-            line-height: 1.5;
         }}
         
         /* 侧边栏切换按钮 */
@@ -1699,25 +1495,6 @@ class HTMLGenerator:
         .sidebar.hidden ~ .content {{
             margin-left: 0;
             padding-left: 6rem;
-        }}
-        
-        /* 阅读进度条 */
-        .reading-progress {{
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: transparent;
-            z-index: 1001;
-        }}
-        
-        .reading-progress .progress-bar {{
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
-            width: 0%;
-            transition: width 0.1s ease;
-            border-radius: 0 2px 2px 0;
         }}
         
         /* 页面样式 */
@@ -1840,7 +1617,7 @@ class HTMLGenerator:
         }}
         
         .note-content {{
-            color: var(--text-color);
+            color: ar(--gh-light-blue) !important;
             font-size: 1.1rem;
             position: relative;
             z-index: 1;
@@ -1849,7 +1626,7 @@ class HTMLGenerator:
         
         .note-author {{
             text-align: right;
-            color: var(--text-color);
+            color: ar(--gh-light-blue) !important;
             opacity: 0.7;
             font-size: 1rem;
             margin-top: 1.5rem;
@@ -2694,64 +2471,45 @@ class HTMLGenerator:
         return ""
     
     @staticmethod
-    def generate_javascript(config):
-        """生成JavaScript代码"""
-        animations = config.get("animations", True)
-        sidebar_collapsible = config.get("sidebar_collapsible", True)
-        show_back_to_top = config.get("show_back_to_top", True)
-        
-        animation_js = """
-        // 动画效果
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                }
-            });
-        }, { threshold: 0.05, rootMargin: '0px 0px -50px 0px' });
-        
-        document.querySelectorAll('.element').forEach(el => {
-            observer.observe(el);
-        });
-        """ if animations else ""
-        
-        return f"""
+    def generate_javascript():
+        """生成JavaScript代码 - 移除主题切换功能"""
+        return """
         // 页面加载完成
-        window.addEventListener('DOMContentLoaded', () => {{
+        window.addEventListener('DOMContentLoaded', () => {
             // 隐藏加载遮罩
             const loadingOverlay = document.getElementById('loadingOverlay');
-            if (loadingOverlay) {{
-                setTimeout(() => {{
+            if (loadingOverlay) {
+                setTimeout(() => {
                     loadingOverlay.classList.add('hidden');
                     setTimeout(() => loadingOverlay.style.display = 'none', 500);
-                }}, 500);
-            }}
+                }, 500);
+            }
             
             // 初始化RGB颜色值
             const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim();
             const secondaryColor = getComputedStyle(document.documentElement).getPropertyValue('--secondary-color').trim();
             
             // 转换颜色为RGB
-            function hexToRgb(hex) {{
-                const result = /^#?([a-f\\d]{{2}})([a-f\\d]{{2}})([a-f\\d]{{2}})$/i.exec(hex);
-                return result ? {{
+            function hexToRgb(hex) {
+                const result = /^#?([a-f\\d]{2})([a-f\\d]{2})([a-f\\d]{2})$/i.exec(hex);
+                return result ? {
                     r: parseInt(result[1], 16),
                     g: parseInt(result[2], 16),
                     b: parseInt(result[3], 16)
-                }} : null;
-            }}
+                } : null;
+            }
             
             const primaryRgb = hexToRgb(primaryColor);
             const secondaryRgb = hexToRgb(secondaryColor);
             
-            if (primaryRgb) {{
-                document.documentElement.style.setProperty('--primary-color-rgb', `${{primaryRgb.r}}, ${{primaryRgb.g}}, ${{primaryRgb.b}}`);
-            }}
+            if (primaryRgb) {
+                document.documentElement.style.setProperty('--primary-color-rgb', `${primaryRgb.r}, ${primaryRgb.g}, ${primaryRgb.b}`);
+            }
             
-            if (secondaryRgb) {{
-                document.documentElement.style.setProperty('--secondary-color-rgb', `${{secondaryRgb.r}}, ${{secondaryRgb.g}}, ${{secondaryRgb.b}}`);
-            }}
-        }});
+            if (secondaryRgb) {
+                document.documentElement.style.setProperty('--secondary-color-rgb', `${secondaryRgb.r}, ${secondaryRgb.g}, ${secondaryRgb.b}`);
+            }
+        });
         
         // 侧边栏功能
         const sidebar = document.getElementById('sidebar');
@@ -2760,208 +2518,183 @@ class HTMLGenerator:
         const content = document.querySelector('.content');
         
         // 初始化侧边栏状态
-        function initSidebar() {{
+        function initSidebar() {
             const isMobile = window.innerWidth <= 768;
             const wasCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
             
-            if (isMobile || wasCollapsed) {{
+            if (isMobile || wasCollapsed) {
                 sidebar.classList.add('hidden');
                 if (toggleBtn) toggleBtn.style.display = 'flex';
-            }} else {{
+            } else {
                 sidebar.classList.remove('hidden');
                 if (toggleBtn) toggleBtn.style.display = 'none';
-            }}
+            }
             
             // 更新快速导航可见性
             updateQuickNavVisibility();
-        }}
+        }
         
         // 页面加载时初始化
         window.addEventListener('load', initSidebar);
         window.addEventListener('resize', initSidebar);
         
         // 切换侧边栏
-        {f"if (toggleBtn) {{" if sidebar_collapsible else ""}
-            toggleBtn.addEventListener('click', (e) => {{
+        if (toggleBtn) {
+            toggleBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
                 sidebar.classList.toggle('hidden');
                 localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('hidden'));
                 
                 // 更新按钮图标
-                if (sidebar.classList.contains('hidden')) {{
+                if (sidebar.classList.contains('hidden')) {
                     toggleBtn.innerHTML = '<i class="fas fa-bars"></i>';
                     toggleBtn.setAttribute('aria-label', '展开侧边栏');
-                }} else {{
+                } else {
                     toggleBtn.innerHTML = '<i class="fas fa-times"></i>';
                     toggleBtn.setAttribute('aria-label', '折叠侧边栏');
-                }}
+                }
                 
                 updateQuickNavVisibility();
-            }});
-        {f"}}" if sidebar_collapsible else ""}
+            });
+        }
         
         // 关闭侧边栏
-        {f"if (closeBtn) {{" if sidebar_collapsible else ""}
-            closeBtn.addEventListener('click', () => {{
+        if (closeBtn) {
+            closeBtn.addEventListener('click', () => {
                 sidebar.classList.add('hidden');
                 localStorage.setItem('sidebarCollapsed', 'true');
-                if (toggleBtn) {{
+                if (toggleBtn) {
                     toggleBtn.style.display = 'flex';
                     toggleBtn.innerHTML = '<i class="fas fa-bars"></i>';
                     toggleBtn.setAttribute('aria-label', '展开侧边栏');
-                }}
+                }
                 updateQuickNavVisibility();
-            }});
-        {f"}}" if sidebar_collapsible else ""}
+            });
+        }
         
         // 点击外部关闭侧边栏（移动端）
-        document.addEventListener('click', (e) => {{
-            if (window.innerWidth <= 768) {{
+        document.addEventListener('click', (e) => {
+            if (window.innerWidth <= 768) {
                 const isClickInsideSidebar = sidebar.contains(e.target);
                 const isClickOnToggle = toggleBtn && toggleBtn.contains(e.target);
                 
-                if (!isClickInsideSidebar && !isClickOnToggle && !sidebar.classList.contains('hidden')) {{
+                if (!isClickInsideSidebar && !isClickOnToggle && !sidebar.classList.contains('hidden')) {
                     sidebar.classList.add('hidden');
                     localStorage.setItem('sidebarCollapsed', 'true');
-                    if (toggleBtn) {{
+                    if (toggleBtn) {
                         toggleBtn.innerHTML = '<i class="fas fa-bars"></i>';
                         toggleBtn.setAttribute('aria-label', '展开侧边栏');
-                    }}
+                    }
                     updateQuickNavVisibility();
-                }}
-            }}
-        }});
+                }
+            }
+        });
         
         // 阻止侧边栏点击事件冒泡
-        sidebar.addEventListener('click', (e) => {{
+        sidebar.addEventListener('click', (e) => {
             e.stopPropagation();
-        }});
+        });
         
         // 页面切换
-        document.querySelectorAll('.tree-item').forEach(item => {{
-            item.addEventListener('click', function() {{
+        document.querySelectorAll('.tree-item').forEach(item => {
+            item.addEventListener('click', function() {
                 const pageId = this.dataset.page;
                 
                 // 更新活动状态
-                document.querySelectorAll('.tree-item').forEach(i => {{
+                document.querySelectorAll('.tree-item').forEach(i => {
                     i.classList.remove('active');
                     i.setAttribute('aria-selected', 'false');
-                }});
+                });
                 this.classList.add('active');
                 this.setAttribute('aria-selected', 'true');
                 
                 // 切换页面
-                document.querySelectorAll('.page').forEach(page => {{
+                document.querySelectorAll('.page').forEach(page => {
                     page.classList.remove('active');
-                }});
+                });
                 
                 const targetPage = document.getElementById(pageId + '-page');
-                if (targetPage) {{
+                if (targetPage) {
                     targetPage.classList.add('active');
                     
                     // 更新URL哈希（用于分享链接）
-                    window.history.replaceState(null, null, `#${{pageId}}`);
+                    window.history.replaceState(null, null, `#${pageId}`);
                     
                     // 更新页面标题
                     const pageTitle = targetPage.querySelector('.page-title')?.textContent || document.title.split(' - ')[0];
-                    document.title = `${{pageTitle}} - ${{document.title.split(' - ')[0]}}`;
-                }}
+                    document.title = `${pageTitle} - ${document.title.split(' - ')[0]}`;
+                }
                 
                 // 滚动到顶部
-                window.scrollTo({{ top: 0, behavior: 'smooth' }});
+                window.scrollTo({ top: 0, behavior: 'smooth' });
                 
                 // 移动端：选择页面后自动折叠侧边栏
-                if (window.innerWidth <= 768) {{
+                if (window.innerWidth <= 768) {
                     sidebar.classList.add('hidden');
                     localStorage.setItem('sidebarCollapsed', 'true');
-                    if (toggleBtn) {{
+                    if (toggleBtn) {
                         toggleBtn.innerHTML = '<i class="fas fa-bars"></i>';
                         toggleBtn.setAttribute('aria-label', '展开侧边栏');
-                    }}
+                    }
                     updateQuickNavVisibility();
-                }}
-                
-                // 更新阅读进度
-                updateReadingProgress();
-            }});
-        }});
+                }
+            });
+        });
         
         // 检查URL哈希并跳转到对应页面
-        function checkUrlHash() {{
+        function checkUrlHash() {
             const hash = window.location.hash.substring(1);
-            if (hash) {{
-                const targetItem = document.querySelector(`.tree-item[data-page="${{hash}}"]`);
-                if (targetItem) {{
+            if (hash) {
+                const targetItem = document.querySelector(`.tree-item[data-page="${hash}"]`);
+                if (targetItem) {
                     setTimeout(() => targetItem.click(), 100);
-                }}
-            }}
-        }}
+                }
+            }
+        }
         
         window.addEventListener('load', checkUrlHash);
         window.addEventListener('hashchange', checkUrlHash);
         
         // 返回顶部功能
-        {f"if ({show_back_to_top}) {{" if show_back_to_top else ""}
-            const backToTop = document.getElementById('backToTop');
-            
-            function updateBackToTop() {{
-                if (window.pageYOffset > 300) {{
-                    backToTop.classList.add('show');
-                }} else {{
-                    backToTop.classList.remove('show');
-                }}
-            }}
-            
-            window.addEventListener('scroll', updateBackToTop);
-            updateBackToTop();
-            
-            backToTop.addEventListener('click', () => {{
-                window.scrollTo({{ top: 0, behavior: 'smooth' }});
-            }});
-        {f"}}" if show_back_to_top else ""}
+        const backToTop = document.getElementById('backToTop');
         
-        // 阅读进度
-        const readingProgress = document.getElementById('readingProgress');
-        const progressBar = readingProgress?.querySelector('.progress-bar');
+        function updateBackToTop() {
+            if (window.pageYOffset > 300) {
+                backToTop.classList.add('show');
+            } else {
+                backToTop.classList.remove('show');
+            }
+        }
         
-        function updateReadingProgress() {{
-            if (!progressBar) return;
-            
-            const currentPage = document.querySelector('.page.active');
-            if (!currentPage) return;
-            
-            const pageHeight = currentPage.scrollHeight - window.innerHeight;
-            const scrolled = window.pageYOffset;
-            const progress = pageHeight > 0 ? (scrolled / pageHeight) * 100 : 0;
-            
-            progressBar.style.width = `${{Math.min(progress, 100)}}%`;
-        }}
+        window.addEventListener('scroll', updateBackToTop);
+        updateBackToTop();
         
-        window.addEventListener('scroll', updateReadingProgress);
-        window.addEventListener('resize', updateReadingProgress);
+        backToTop.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
         
         // 快速导航
         const quickNav = document.getElementById('quickNav');
         
-        function updateQuickNavVisibility() {{
+        function updateQuickNavVisibility() {
             if (!quickNav) return;
             
-            if (sidebar.classList.contains('hidden')) {{
+            if (sidebar.classList.contains('hidden')) {
                 quickNav.classList.add('visible');
-            }} else {{
+            } else {
                 quickNav.classList.remove('visible');
-            }}
-        }}
+            }
+        }
         
         // 快速导航按钮功能
-        if (quickNav) {{
+        if (quickNav) {
             const navButtons = quickNav.querySelectorAll('.nav-btn');
             
-            navButtons.forEach(btn => {{
-                btn.addEventListener('click', function() {{
+            navButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
                     const action = this.dataset.action;
                     
-                    switch(action) {{
+                    switch(action) {
                         case 'prev':
                             navigateToPreviousPage();
                             break;
@@ -2974,34 +2707,34 @@ class HTMLGenerator:
                         case 'search':
                             openSearch();
                             break;
-                    }}
-                }});
-            }});
-        }}
+                    }
+                });
+            });
+        }
         
-        function navigateToPreviousPage() {{
+        function navigateToPreviousPage() {
             const currentItem = document.querySelector('.tree-item.active');
             const prevItem = currentItem?.previousElementSibling;
             
-            if (prevItem && prevItem.classList.contains('tree-item')) {{
+            if (prevItem && prevItem.classList.contains('tree-item')) {
                 prevItem.click();
-            }}
-        }}
+            }
+        }
         
-        function navigateToNextPage() {{
+        function navigateToNextPage() {
             const currentItem = document.querySelector('.tree-item.active');
             const nextItem = currentItem?.nextElementSibling;
             
-            if (nextItem && nextItem.classList.contains('tree-item')) {{
+            if (nextItem && nextItem.classList.contains('tree-item')) {
                 nextItem.click();
-            }}
-        }}
+            }
+        }
         
-        function toggleSidebar() {{
-            if (toggleBtn) {{
+        function toggleSidebar() {
+            if (toggleBtn) {
                 toggleBtn.click();
-            }}
-        }}
+            }
+        }
         
         // 搜索功能
         const searchModal = document.getElementById('searchModal');
@@ -3009,246 +2742,212 @@ class HTMLGenerator:
         const searchClose = document.getElementById('searchClose');
         const searchResults = document.getElementById('searchResults');
         
-        function openSearch() {{
-            if (searchModal) {{
+        function openSearch() {
+            if (searchModal) {
                 searchModal.classList.add('active');
-                setTimeout(() => {{
+                setTimeout(() => {
                     if (searchInput) searchInput.focus();
-                }}, 100);
-            }}
-        }}
+                }, 100);
+            }
+        }
         
-        function closeSearch() {{
-            if (searchModal) {{
+        function closeSearch() {
+            if (searchModal) {
                 searchModal.classList.remove('active');
                 if (searchInput) searchInput.value = '';
                 if (searchResults) searchResults.innerHTML = '';
-            }}
-        }}
+            }
+        }
         
-        if (searchClose) {{
+        if (searchClose) {
             searchClose.addEventListener('click', closeSearch);
-        }}
+        }
         
-        if (searchModal) {{
-            searchModal.addEventListener('click', (e) => {{
-                if (e.target === searchModal) {{
+        if (searchModal) {
+            searchModal.addEventListener('click', (e) => {
+                if (e.target === searchModal) {
                     closeSearch();
-                }}
-            }});
-        }}
+                }
+            });
+        }
         
         // 搜索功能
-        if (searchInput) {{
-            searchInput.addEventListener('input', function() {{
+        if (searchInput) {
+            searchInput.addEventListener('input', function() {
                 const query = this.value.trim().toLowerCase();
                 
-                if (!query) {{
+                if (!query) {
                     if (searchResults) searchResults.innerHTML = '';
                     return;
-                }}
+                }
                 
                 // 搜索所有页面内容
                 const results = [];
                 const pages = document.querySelectorAll('.page');
                 
-                pages.forEach(page => {{
+                pages.forEach(page => {
                     const pageId = page.id.replace('-page', '');
                     const pageTitle = page.querySelector('.page-title')?.textContent || '未命名页面';
                     const elements = page.querySelectorAll('.element');
                     
-                    elements.forEach((element, index) => {{
+                    elements.forEach((element, index) => {
                         const text = element.textContent.toLowerCase();
-                        if (text.includes(query)) {{
+                        if (text.includes(query)) {
                             const preview = element.textContent.substring(0, 150) + (element.textContent.length > 150 ? '...' : '');
-                            const title = element.querySelector('h1, h2, h3, h4, h5, h6')?.textContent || `内容块 #${{index + 1}}`;
+                            const title = element.querySelector('h1, h2, h3, h4, h5, h6')?.textContent || `内容块 #${index + 1}`;
                             
-                            results.push({{
+                            results.push({
                                 pageId,
                                 pageTitle,
                                 title,
                                 preview,
                                 element: element
-                            }});
-                        }}
-                    }});
-                }});
+                            });
+                        }
+                    });
+                });
                 
                 // 显示搜索结果
-                if (searchResults) {{
-                    if (results.length > 0) {{
+                if (searchResults) {
+                    if (results.length > 0) {
                         searchResults.innerHTML = results.map(result => `
-                            <div class="search-result-item" data-page="${{result.pageId}}">
-                                <div class="search-result-title">${{result.title}} - ${{result.pageTitle}}</div>
-                                <div class="search-result-content">${{result.preview}}</div>
+                            <div class="search-result-item" data-page="${result.pageId}">
+                                <div class="search-result-title">${result.title} - ${result.pageTitle}</div>
+                                <div class="search-result-content">${result.preview}</div>
                             </div>
                         `).join('');
                         
                         // 添加点击事件
-                        searchResults.querySelectorAll('.search-result-item').forEach(item => {{
-                            item.addEventListener('click', function() {{
+                        searchResults.querySelectorAll('.search-result-item').forEach(item => {
+                            item.addEventListener('click', function() {
                                 const pageId = this.dataset.page;
-                                const targetItem = document.querySelector(`.tree-item[data-page="${{pageId}}"]`);
-                                if (targetItem) {{
+                                const targetItem = document.querySelector(`.tree-item[data-page="${pageId}"]`);
+                                if (targetItem) {
                                     targetItem.click();
                                     closeSearch();
                                     
                                     // 滚动到对应元素
-                                    setTimeout(() => {{
+                                    setTimeout(() => {
                                         const elementIndex = Array.from(searchResults.querySelectorAll('.search-result-item')).indexOf(this);
-                                        if (results[elementIndex]?.element) {{
-                                            results[elementIndex].element.scrollIntoView({{
+                                        if (results[elementIndex]?.element) {
+                                            results[elementIndex].element.scrollIntoView({
                                                 behavior: 'smooth',
                                                 block: 'center'
-                                            }});
-                                        }}
-                                    }}, 300);
-                                }}
-                            }});
-                        }});
-                    }} else {{
+                                            });
+                                        }
+                                    }, 300);
+                                }
+                            });
+                        });
+                    } else {
                         searchResults.innerHTML = '<div style="text-align: center; padding: 2rem; color: var(--text-color); opacity: 0.5;">未找到匹配的内容</div>';
-                    }}
-                }}
-            }});
+                    }
+                }
+            });
             
             // 支持回车键搜索
-            searchInput.addEventListener('keydown', function(e) {{
-                if (e.key === 'Enter') {{
+            searchInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
                     e.preventDefault();
                     const firstResult = searchResults?.querySelector('.search-result-item');
-                    if (firstResult) {{
+                    if (firstResult) {
                         firstResult.click();
-                    }}
-                }} else if (e.key === 'Escape') {{
+                    }
+                } else if (e.key === 'Escape') {
                     closeSearch();
-                }}
-            }});
-        }}
+                }
+            });
+        }
         
-        // 主题切换
-        const themeButtons = document.querySelectorAll('.theme-btn');
+        // 动画效果
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.05, rootMargin: '0px 0px -50px 0px' });
         
-        themeButtons.forEach(btn => {{
-            btn.addEventListener('click', function() {{
-                const theme = this.dataset.theme;
-                
-                // 更新活动状态
-                themeButtons.forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
-                
-                // 保存主题偏好
-                localStorage.setItem('preferredTheme', theme);
-                
-                // 应用主题
-                applyTheme(theme);
-            }});
-        }});
-        
-        function applyTheme(theme) {{
-            if (theme === 'dark') {{
-                document.documentElement.style.setProperty('--bg-color', '#0f172a');
-                document.documentElement.style.setProperty('--text-color', '#f1f5f9');
-                document.documentElement.style.setProperty('--sidebar-bg', '#1e293b');
-                document.documentElement.style.setProperty('--card-bg', '#334155');
-                document.documentElement.style.setProperty('--border-color', '#475569');
-                document.documentElement.style.setProperty('--code-bg', '#1e293b');
-            }} else {{
-                document.documentElement.style.setProperty('--bg-color', '#f8fafc');
-                document.documentElement.style.setProperty('--text-color', '#1e293b');
-                document.documentElement.style.setProperty('--sidebar-bg', '#ffffff');
-                document.documentElement.style.setProperty('--card-bg', '#ffffff');
-                document.documentElement.style.setProperty('--border-color', '#e2e8f0');
-                document.documentElement.style.setProperty('--code-bg', '#f1f5f9');
-            }}
-        }}
-        
-        // 加载保存的主题
-        const savedTheme = localStorage.getItem('preferredTheme') || 'light';
-        const themeBtn = document.querySelector(`.theme-btn[data-theme="${{savedTheme}}"]`);
-        if (themeBtn) {{
-            themeBtn.classList.add('active');
-            applyTheme(savedTheme);
-        }}
+        document.querySelectorAll('.element').forEach(el => {
+            observer.observe(el);
+        });
         
         // 键盘快捷键
-        document.addEventListener('keydown', (e) => {{
+        document.addEventListener('keydown', (e) => {
             // Ctrl/Cmd + B 切换侧边栏
-            if ((e.ctrlKey || e.metaKey) && e.key === 'b') {{
+            if ((e.ctrlKey || e.metaKey) && e.key === 'b') {
                 e.preventDefault();
                 if (toggleBtn) toggleBtn.click();
-            }}
+            }
             
             // Ctrl/Cmd + K 或 / 键打开搜索
-            if ((e.ctrlKey || e.metaKey) && e.key === 'k' || e.key === '/') {{
+            if ((e.ctrlKey || e.metaKey) && e.key === 'k' || e.key === '/') {
                 e.preventDefault();
                 openSearch();
-            }}
+            }
             
             // ESC 键关闭搜索或侧边栏
-            if (e.key === 'Escape') {{
-                if (searchModal?.classList.contains('active')) {{
+            if (e.key === 'Escape') {
+                if (searchModal?.classList.contains('active')) {
                     closeSearch();
-                }} else if (window.innerWidth <= 768 && !sidebar.classList.contains('hidden')) {{
+                } else if (window.innerWidth <= 768 && !sidebar.classList.contains('hidden')) {
                     sidebar.classList.add('hidden');
                     localStorage.setItem('sidebarCollapsed', 'true');
-                    if (toggleBtn) {{
+                    if (toggleBtn) {
                         toggleBtn.innerHTML = '<i class="fas fa-bars"></i>';
                         toggleBtn.setAttribute('aria-label', '展开侧边栏');
-                    }}
+                    }
                     updateQuickNavVisibility();
-                }}
-            }}
+                }
+            }
             
             // 方向键导航
-            if (e.key === 'ArrowLeft') {{
+            if (e.key === 'ArrowLeft') {
                 e.preventDefault();
                 navigateToPreviousPage();
-            }}
+            }
             
-            if (e.key === 'ArrowRight') {{
+            if (e.key === 'ArrowRight') {
                 e.preventDefault();
                 navigateToNextPage();
-            }}
+            }
             
             // T 键切换目录
-            if (e.key === 't' || e.key === 'T') {{
+            if (e.key === 't' || e.key === 'T') {
                 e.preventDefault();
                 toggleSidebar();
-            }}
+            }
             
             // 空格键或PgDn翻页
-            if (e.key === ' ' || e.key === 'PageDown') {{
+            if (e.key === ' ' || e.key === 'PageDown') {
                 e.preventDefault();
                 navigateToNextPage();
-            }}
+            }
             
             // PgUp翻页
-            if (e.key === 'PageUp') {{
+            if (e.key === 'PageUp') {
                 e.preventDefault();
                 navigateToPreviousPage();
-            }}
-        }});
+            }
+        });
         
         // 阻止空格键滚动页面
-        document.addEventListener('keydown', (e) => {{
-            if (e.key === ' ' && e.target === document.body) {{
+        document.addEventListener('keydown', (e) => {
+            if (e.key === ' ' && e.target === document.body) {
                 e.preventDefault();
-            }}
-        }}, false);
-        
-        {animation_js}
+            }
+        }, false);
         
         // 初始化：显示第一个页面
-        setTimeout(() => {{
+        setTimeout(() => {
             const coverItem = document.querySelector('.cover-item');
-            if (coverItem) {{
+            if (coverItem) {
                 coverItem.click();
-            }}
-        }}, 100);
+            }
+        }, 100);
         
         // 打印按钮（可选功能）
-        function addPrintButton() {{
+        function addPrintButton() {
             const printBtn = document.createElement('button');
             printBtn.className = 'nav-btn';
             printBtn.setAttribute('data-action', 'print');
@@ -3256,14 +2955,14 @@ class HTMLGenerator:
             printBtn.setAttribute('title', '打印页面 (Ctrl+P)');
             printBtn.innerHTML = '<i class="fas fa-print"></i>';
             
-            printBtn.addEventListener('click', () => {{
+            printBtn.addEventListener('click', () => {
                 window.print();
-            }});
+            });
             
-            if (quickNav) {{
+            if (quickNav) {
                 quickNav.appendChild(printBtn);
-            }}
-        }}
+            }
+        }
         
         // 可选：添加打印按钮
         // addPrintButton();
@@ -3411,52 +3110,15 @@ class HTMLGenerator:
             }, 300);
         }
         
-        // 监听系统主题变化
-        if (window.matchMedia) {
-            const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
-            
-            prefersDarkScheme.addEventListener('change', (e) => {
-                const savedTheme = localStorage.getItem('preferredTheme');
-                if (!savedTheme || savedTheme === 'auto') {
-                    const theme = e.matches ? 'dark' : 'light';
-                    const themeBtn = document.querySelector(`.theme-btn[data-theme="${theme}"]`);
-                    if (themeBtn) {
-                        themeBtn.click();
-                    }
-                }
-            });
-        }
-        
         // 添加页面加载完成事件
         window.addEventListener('load', () => {
             // 添加加载完成类
             document.body.classList.add('page-loaded');
-            
-            // 发送分析事件（可选）
-            if (typeof gtag !== 'undefined') {
-                gtag('event', 'page_view', {
-                    page_title: document.title,
-                    page_location: window.location.href,
-                    page_path: window.location.pathname
-                });
-            }
         });
         
         // 错误处理
         window.addEventListener('error', (e) => {
             console.error('页面错误:', e.error);
-            // 可以在这里发送错误报告
-        });
-        
-        // 离线检测
-        window.addEventListener('offline', () => {
-            console.log('网络已断开');
-            // 可以显示离线提示
-        });
-        
-        window.addEventListener('online', () => {
-            console.log('网络已恢复');
-            // 可以隐藏离线提示
         });
         </script>"""
 
@@ -4504,6 +4166,7 @@ def render_home():
     with tab2:
         st.markdown("### 📂 我的项目")
         
+        # 修复：使用project_manager正确获取项目列表
         projects = project_manager.list_projects()
         
         if not projects:
@@ -4513,22 +4176,27 @@ def render_home():
             点击上方的"创建项目"标签开始您的第一个项目！
             """)
         else:
-            # 项目统计
+            # 项目统计 - 修复数据获取
             col_stats1, col_stats2, col_stats3, col_stats4 = st.columns(4)
             with col_stats1:
                 st.metric("项目总数", len(projects))
             with col_stats2:
-                completed = sum(1 for p in projects if p["has_html"])
+                completed = sum(1 for p in projects if p.get("has_html", False))
                 st.metric("已生成HTML", completed)
             with col_stats3:
-                total_size = sum(p["size"] for p in projects)
+                total_size = sum(p.get("size", 0) for p in projects)
                 st.metric("总大小", project_manager.format_size(total_size))
             with col_stats4:
                 if projects:
-                    latest = max(projects, key=lambda x: x["config"].get("last_modified", ""))
-                    st.metric("最近更新", latest["name"][:10] + "...")
+                    # 修复：正确处理最后修改时间
+                    latest_project = max(
+                        [p for p in projects if p.get("config", {}).get("last_modified")], 
+                        key=lambda x: x["config"]["last_modified"],
+                        default=projects[0]
+                    )
+                    st.metric("最近更新", latest_project["name"][:10] + "...")
             
-            # 项目列表
+            # 项目列表 - 修复项目信息显示
             st.markdown("---")
             
             for project in projects:
@@ -4536,33 +4204,43 @@ def render_home():
                     col1, col2, col3, col4 = st.columns([3, 2, 1, 1])
                     
                     with col1:
+                        # 修复：确保获取到所有项目信息
+                        project_name = project.get('name', '未命名项目')
+                        config = project.get('config', {})
+                        description = config.get('description', '无描述')
+                        created_at = config.get('created_at', '').split('T')[0] if config.get('created_at') else '未知'
+                        page_count = project.get('page_count', 0) + 1  # 包括封面页
+                        version = config.get('version', '1.0')
+                        
                         st.markdown(f"""
                         <div style="padding: 20px; background: white; border-radius: 15px; margin: 10px 0; box-shadow: 0 5px 20px rgba(0,0,0,0.05);">
                             <h4 style="color: #2d3748; margin: 0 0 10px 0; display: flex; align-items: center;">
                                 <span style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.9rem; margin-right: 10px;">
-                                    v{project['config'].get('version', '1.0')}
+                                    v{version}
                                 </span>
-                                {project['name']}
+                                {project_name}
                             </h4>
                             <p style="color: #718096; margin: 0 0 8px 0; font-size: 0.95em;">
-                                {project['config'].get('description', '无描述')}
+                                {description}
                             </p>
                             <div style="display: flex; gap: 15px; margin-top: 10px;">
                                 <span style="color: #a0aec0; font-size: 0.85em;">
-                                    <i class="fas fa-calendar"></i> {project['config'].get('created_at', '').split('T')[0]}
+                                    <i class="fas fa-calendar"></i> {created_at}
                                 </span>
                                 <span style="color: #a0aec0; font-size: 0.85em;">
-                                    <i class="fas fa-file-alt"></i> {project_manager.format_size(project['size'])}
+                                    <i class="fas fa-file-alt"></i> {project_manager.format_size(project.get('size', 0))}
                                 </span>
                                 <span style="color: #a0aec0; font-size: 0.85em;">
-                                    <i class="fas fa-file"></i> {project['page_count']}页
+                                    <i class="fas fa-file"></i> {page_count}页
                                 </span>
                             </div>
                         </div>
                         """, unsafe_allow_html=True)
                     
                     with col2:
-                        if project["has_html"]:
+                        # 修复：正确判断HTML文件状态
+                        has_html = project.get("has_html", False)
+                        if has_html:
                             st.markdown("""
                             <div style="padding: 10px; text-align: center; border-radius: 10px; background: rgba(16, 185, 129, 0.1); color: #10b981; font-weight: 600;">
                                 ✅ 已生成HTML
@@ -4577,38 +4255,32 @@ def render_home():
                     
                     with col3:
                         if st.button("打开", 
-                                    key=f"open_{project['name']}", 
+                                    key=f"open_{project_name}", 
                                     use_container_width=True,
-                                    help=f"打开项目: {project['name']}"):
-                            success, result = project_manager.load_project(project["name"])
+                                    help=f"打开项目: {project_name}"):
+                            success, result = project_manager.load_project(project_name)
                             if success:
                                 st.session_state.current_project = result
                                 st.session_state.project_structure = result["structure"]
                                 st.session_state.current_page = result["structure"]["cover_page"]
                                 st.session_state.active_tab = "editor"
                                 st.session_state.project_loaded = True
-                                SessionStateManager.add_notification(f"已加载项目: {project['name']}", "success")
+                                SessionStateManager.add_notification(f"已加载项目: {project_name}", "success")
                                 st.rerun()
                             else:
                                 SessionStateManager.add_notification(f"加载失败: {result}", "error")
                     
                     with col4:
                         if st.button("删除", 
-                                    key=f"delete_{project['name']}", 
+                                    key=f"delete_{project_name}", 
                                     type="secondary",
                                     use_container_width=True,
-                                    help=f"删除项目: {project['name']}"):
-                            # 确认删除
-                            if st.checkbox(f"确认删除项目 '{project['name']}'?", key=f"confirm_del_proj_{project['name']}"):
-                                success, message = project_manager.delete_project(project["name"])
-                                if success:
-                                    st.success(f"✅ {message}")
-                                    SessionStateManager.add_notification("项目已删除", "success")
-                                    time.sleep(1)
-                                    st.rerun()
-                                else:
-                                    st.error(f"❌ {message}")
-                                    SessionStateManager.add_notification(f"删除失败: {message}", "error")
+                                    help=f"删除项目: {project_name}"):
+                            # 使用会话状态记录删除确认
+                            confirm_key = f"confirm_delete_{project_name}"
+                            if not st.session_state.get(confirm_key):
+                                st.session_state[confirm_key] = True
+                                st.rerun()
     
     with tab3:
         st.markdown("### 📖 使用指南")
