@@ -8,6 +8,7 @@ import time
 import shutil
 import hashlib
 from typing import Dict, List, Optional, Any
+import html
 
 # ============================================
 # 页面配置
@@ -2452,10 +2453,14 @@ class HTMLGenerator:
             caption = element.get("caption", "")
             
             caption_html = f'<p class="image-caption" style="text-align: center; color: var(--text-color); opacity: 0.7; font-size: 0.9rem; margin-top: 0.5rem;">{caption}</p>' if caption else ''
-            
+            # 如果用户只填写了文件名，则导出时引用 pictures/ 目录
+            img_src = src
+            if src and not (src.startswith('http://') or src.startswith('https://') or src.startswith('/') or src.startswith('pictures/')):
+                img_src = f'pictures/{src}'
+
             return f'''
             <div class="image-container">
-                <img src="{src}" alt="{alt}" style="max-width: 100%; height: auto;">
+                <img src="{img_src}" alt="{alt}" style="max-width: 100%; height: auto;">
                 {caption_html}
             </div>
             '''
@@ -3153,14 +3158,14 @@ class ContentElement:
             element.update({
                 "text": kwargs.get("text", "新标题"),
                 "level": kwargs.get("level", 2),
-                "color": kwargs.get("color", "#2d3748"),
+                "color": kwargs.get("color", "#007acc"),
                 "align": kwargs.get("align", "left"),
                 "animation": kwargs.get("animation", "none")
             })
         elif element_type == "paragraph":
             element.update({
                 "text": kwargs.get("text", "请输入段落内容..."),
-                "color": kwargs.get("color", "#4a5568"),
+                "color": kwargs.get("color", "#007acc"),
                 "background": kwargs.get("background", "#ffffff"),
                 "align": kwargs.get("align", "left"),
                 "font_size": kwargs.get("font_size", "1rem"),
@@ -3170,7 +3175,7 @@ class ContentElement:
             element.update({
                 "text": kwargs.get("text", "这里是注释内容..."),
                 "author": kwargs.get("author", ""),
-                "color": kwargs.get("color", "#666666"),
+                "color": kwargs.get("color", "#007acc"),
                 "background": kwargs.get("background", "#f8f9fa"),
                 "show_quotes": kwargs.get("show_quotes", True)
             })
@@ -3309,7 +3314,8 @@ def render_page_tree_item(page, depth=0):
     
     is_active = st.session_state.current_page and st.session_state.current_page.get("id") == page.get("id")
     
-    col1, col2, col3 = st.sidebar.columns([3, 1, 1])
+    # 增加移动按钮：上移/下移，以及编辑/删除
+    col1, col2, col3, col4 = st.sidebar.columns([3, 1, 1, 1])
     
     with col1:
         if st.button(
@@ -3327,8 +3333,29 @@ def render_page_tree_item(page, depth=0):
                     help="编辑页面标题",
                     use_container_width=True):
             edit_page_title(page["id"])
-    
+
     with col3:
+        if st.button("⬆️", key=f"move_up_{page['id']}", help="上移页面"):
+            structure = st.session_state.project_structure
+            if "pages" in structure:
+                idx = next((i for i, p in enumerate(structure["pages"]) if p["id"] == page["id"]), -1)
+                if idx > 0:
+                    structure["pages"][idx], structure["pages"][idx-1] = structure["pages"][idx-1], structure["pages"][idx]
+                    save_project()
+                    st.session_state.current_page = structure["pages"][idx-1]
+                    st.experimental_rerun()
+
+        if st.button("⬇️", key=f"move_down_{page['id']}", help="下移页面"):
+            structure = st.session_state.project_structure
+            if "pages" in structure:
+                idx = next((i for i, p in enumerate(structure["pages"]) if p["id"] == page["id"]), -1)
+                if idx >= 0 and idx < len(structure["pages"]) - 1:
+                    structure["pages"][idx], structure["pages"][idx+1] = structure["pages"][idx+1], structure["pages"][idx]
+                    save_project()
+                    st.session_state.current_page = structure["pages"][idx+1]
+                    st.experimental_rerun()
+
+    with col4:
         if st.button("🗑️", 
                     key=f"del_{page['id']}",
                     help="删除此页面",
@@ -3385,22 +3412,31 @@ def delete_page(page_id):
         return
     
     if "pages" in structure:
-        # 查找页面索引
-        page_index = next((i for i, p in enumerate(structure["pages"]) if p["id"] == page_id), -1)
-        
-        if page_index >= 0:
-            # 使用 session_state 记录待确认删除，避免 checkbox 嵌套按钮导致无法交互
-            pending_key = f"pending_delete_page_{page_id}"
-            if st.session_state.get(pending_key):
-                st.warning(f"⚠️ 确认删除页面 '{structure['pages'][page_index].get('title', '未命名')}'? 此操作不可撤销。")
-                colc, coly = st.columns([1,1])
-                with colc:
-                    if st.button("取消", key=f"cancel_delete_page_{page_id}"):
-                        st.session_state[pending_key] = False
-                        st.rerun()
-                with coly:
-                    if st.button("🗑️ 确认删除", key=f"confirm_delete_page_{page_id}"):
-                        deleted_page = structure["pages"].pop(page_index)
+        # 递归删除页面（处理嵌套）
+        def remove_page_by_id(pages_list, pid):
+            for i, p in enumerate(pages_list):
+                if p.get("id") == pid:
+                    return pages_list.pop(i)
+                if "children" in p and p["children"]:
+                    removed = remove_page_by_id(p["children"], pid)
+                    if removed:
+                        return removed
+            return None
+
+        pending_key = f"pending_delete_page_{page_id}"
+        if st.session_state.get(pending_key):
+            # 展示确认
+            title = next((p.get('title') for p in structure.get('pages', []) if p.get('id') == page_id), '')
+            st.warning(f"⚠️ 确认删除页面 '{title or page_id}'? 此操作不可撤销。")
+            colc, coly = st.columns([1,1])
+            with colc:
+                if st.button("取消", key=f"cancel_delete_page_{page_id}"):
+                    st.session_state[pending_key] = False
+                    st.experimental_rerun()
+            with coly:
+                if st.button("🗑️ 确认删除", key=f"confirm_delete_page_{page_id}"):
+                    deleted_page = remove_page_by_id(structure.get('pages', []), page_id)
+                    if deleted_page:
                         # 如果删除的是当前页面，切换到封面页
                         if st.session_state.current_page and st.session_state.current_page.get("id") == page_id:
                             st.session_state.current_page = structure["cover_page"]
@@ -3408,16 +3444,17 @@ def delete_page(page_id):
                         if save_project():
                             st.session_state[pending_key] = False
                             SessionStateManager.add_notification("页面已删除", "success")
-                            st.rerun()
+                            st.experimental_rerun()
                         else:
-                            # 恢复页面
-                            structure["pages"].insert(page_index, deleted_page)
-                            st.session_state[pending_key] = False
                             SessionStateManager.add_notification("删除失败", "error")
-            else:
-                if st.button("🗑️ 确认删除此页面", key=f"del_btn_page_{page_id}"):
-                    st.session_state[pending_key] = True
-                    st.rerun()
+                    else:
+                        SessionStateManager.add_notification("未找到要删除的页面", "warning")
+                        st.session_state[pending_key] = False
+                        st.experimental_rerun()
+        else:
+            if st.button("🗑️ 确认删除此页面", key=f"del_btn_page_{page_id}"):
+                st.session_state[pending_key] = True
+                st.experimental_rerun()
 
 def edit_page_title(page_id):
     """编辑页面标题"""
@@ -3588,9 +3625,8 @@ def render_content_element(element, page, index):
             
             with col_ops2:
                 if st.button("✏️", key=f"edit_{element_id}", help="编辑"):
-                    st.session_state.edit_mode = True
-                    st.session_state.edit_element_id = element_id
-                    st.rerun()
+                        st.session_state.edit_mode = True
+                        st.session_state.edit_element_id = element_id
             
             with col_ops3:
                 if st.button("⬇️", key=f"down_{element_id}", help="下移"):
@@ -3718,6 +3754,21 @@ def render_element_editor(element, page, index):
             with col_bg:
                 element["background"] = st.color_picker("背景颜色", value=element.get("background", "#f8f9fa"))
         
+        elif element_type == "image":
+            element["src"] = st.text_input("图片文件名（仅文件名或相对/绝对URL）", value=element.get("src", ""), help="示例: mypic.jpg 或 https://.../img.png")
+            element["alt"] = st.text_input("替代文本 (alt)", value=element.get("alt", "图片"))
+            element["caption"] = st.text_input("图片说明 (caption)", value=element.get("caption", ""))
+            col_w, col_a = st.columns(2)
+            with col_w:
+                element["width"] = st.text_input("宽度", value=element.get("width", "100%"))
+            with col_a:
+                element["align"] = st.selectbox("对齐方式", ["center", "left", "right"], index=["center", "left", "right"].index(element.get("align", "center")))
+
+        elif element_type == "code":
+            element["code"] = st.text_area("代码内容", value=element.get("code", ""), height=200)
+            element["language"] = st.text_input("语言 (例如 python, javascript)", value=element.get("language", "python"))
+            element["show_line_numbers"] = st.checkbox("显示行号", value=element.get("show_line_numbers", True))
+            element["theme"] = st.selectbox("主题", ["default", "dark", "light"], index=["default", "dark", "light"].index(element.get("theme", "default")))
         elif element_type == "button":
             col_text, col_url = st.columns(2)
             with col_text:
@@ -3835,6 +3886,28 @@ def render_preview(page):
                 """, unsafe_allow_html=True)
             else:
                 st.info("请添加B站视频ID")
+        
+        elif element["type"] == "image":
+            src = element.get("src", "")
+            alt = element.get("alt", "图片")
+            caption = element.get("caption", "")
+            img_src = src
+            if src and not (src.startswith('http://') or src.startswith('https://') or src.startswith('/') or src.startswith('pictures/')):
+                img_src = f'pictures/{src}'
+            st.markdown(f"""
+            <div style="text-align: {element.get('align', 'center')}; margin: 15px 0;">
+                <img src="{img_src}" alt="{alt}" style="max-width: {element.get('width','100%')}; height: auto; border-radius: 8px;" />
+                {f'<div style="color: #8da9c9; margin-top:8px;">{caption}</div>' if caption else ''}
+            </div>
+            """, unsafe_allow_html=True)
+
+        elif element["type"] == "code":
+            code = element.get("code", "")
+            language = element.get("language", "text")
+            escaped = html.escape(code)
+            st.markdown(f"""
+            <pre style="background: #0b1220; color: #cddbf6; padding:12px; border-radius:8px; overflow:auto;"><code class="language-{language}">{escaped}</code></pre>
+            """, unsafe_allow_html=True)
 
 # ============================================
 # 项目操作函数
