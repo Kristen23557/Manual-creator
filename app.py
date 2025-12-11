@@ -9,6 +9,70 @@ import shutil
 import hashlib
 from typing import Dict, List, Optional, Any
 import html
+import streamlit.components.v1 as components
+import re
+import traceback
+import sys
+from pathlib import Path as _Path
+
+# Safe rerun helper to support multiple Streamlit versions
+def safe_rerun():
+    """Try to rerun the Streamlit script in a compatible way.
+    If Streamlit provides experimental_rerun() or rerun(), call it.
+    Otherwise attempt a harmless fallback that nudges a rerender.
+    """
+    try:
+        if hasattr(st, 'experimental_rerun'):
+            st.experimental_rerun()
+            return
+        if hasattr(st, 'rerun'):
+            st.rerun()
+            return
+    except Exception:
+        pass
+
+    # Fallback: toggle a session_state key and try to set query params to force redraw
+    try:
+        key = '_copilot_force_rerun'
+        st.session_state[key] = not st.session_state.get(key, False)
+        try:
+            if hasattr(st, 'experimental_set_query_params'):
+                st.experimental_set_query_params(_r=int(time.time() * 1000))
+        except Exception:
+            pass
+    except Exception:
+        # Last resort: call st.stop() to end current run gracefully
+        try:
+            st.stop()
+        except Exception:
+            pass
+
+    # -------------------------
+    # 错误日志记录工具
+    # -------------------------
+    LOG_DIR = _Path("logs")
+    LOG_DIR.mkdir(exist_ok=True)
+    LOG_FILE = LOG_DIR / "streamlit_errors.log"
+
+    def log_error(message: str):
+        try:
+            with open(LOG_FILE, "a", encoding="utf-8") as lf:
+                lf.write(f"\n=== {datetime.now().isoformat()} ===\n")
+                lf.write(message)
+                lf.write("\n")
+        except Exception:
+            # 不要在记录失败时打断主流程
+            pass
+
+    # 捕获未处理异常并记录
+    def _global_excepthook(exc_type, exc_value, exc_tb):
+        try:
+            tb = ''.join(traceback.format_exception(exc_type, exc_value, exc_tb))
+            log_error(tb)
+        except Exception:
+            pass
+
+    sys.excepthook = _global_excepthook
 
 # ============================================
 # 页面配置
@@ -979,6 +1043,7 @@ class SessionStateManager:
             "time": time.time(),
             "duration": duration
         }
+        
     
     @staticmethod
     def show_notifications():
@@ -1004,12 +1069,14 @@ class SessionStateManager:
         """开始操作"""
         st.session_state.current_operation = operation_name
         st.session_state.is_saving = True
+        
     
     @staticmethod
     def end_operation():
         """结束操作"""
         st.session_state.current_operation = None
         st.session_state.is_saving = False
+        
 
 # 项目操作类（已提取至 manual_creator.project_manager）
 from manual_creator.project_manager import ProjectManager
@@ -2387,18 +2454,39 @@ class HTMLGenerator:
             text = element.get("text", "")
             color = element.get("color", "var(--text-color)")
             align = element.get("align", "left")
-            
-            return f'<h{level} class="heading heading-{level}" style="color: {color}; text-align: {align};">{text}</h{level}>'
+            font_family = element.get('font_family', "Inter, 'Microsoft YaHei', sans-serif")
+            font_size = element.get('font_size', '2rem')
+            bold = element.get('bold', True)
+            underline = element.get('underline', False)
+            strike = element.get('strike', False)
+            weight = '700' if bold else '400'
+            text_decoration = 'line-through' if strike else ('underline' if underline else 'none')
+            # Use format() to avoid f-string parsing issues when attributes contain braces
+            return '<h{lvl} class="heading heading-{lvl}" style="color: {color}; text-align: {align}; font-family: {ff}; font-size: {fs}; font-weight: {wt}; text-decoration: {td};">{text}</h{lvl}>'.format(
+                lvl=level,
+                color=html.escape(color),
+                align=html.escape(align),
+                ff=font_family,
+                fs=font_size,
+                wt=weight,
+                td=text_decoration,
+                text=html.escape(text)
+            )
         
         elif element_type == "paragraph":
             text = element.get("text", "")
             color = element.get("color", "var(--text-color)")
             background = element.get("background", "var(--card-bg)")
             align = element.get("align", "left")
-            
+            font_family = element.get('font_family', "Inter, 'Microsoft YaHei', sans-serif")
+            font_size = element.get('font_size', '1rem')
+            bold = element.get('bold', False)
+            underline = element.get('underline', False)
+            strike = element.get('strike', False)
             text_with_breaks = text.replace('\n', '<br>')
+            style_dec = f"font-family: {font_family}; font-size: {font_size}; font-weight: {'700' if bold else '400'}; text-decoration: {'line-through' if strike else ('underline' if underline else 'none')};"
             return f'''
-            <div class="paragraph" style="color: {color}; background: {background}; text-align: {align};">
+            <div class="paragraph" style="color: {color}; background: {background}; text-align: {align}; {style_dec}">
                 {text_with_breaks}
             </div>
             '''
@@ -2408,12 +2496,13 @@ class HTMLGenerator:
             author = element.get("author", "")
             color = element.get("color", "var(--text-color)")
             background = element.get("background", "var(--card-bg)")
-            
+            font_family = element.get('font_family', "Inter, 'Microsoft YaHei', sans-serif")
+            font_size = element.get('font_size', '1rem')
+            underline = element.get('underline', False)
             author_html = f'<div class="note-author">{author}</div>' if author else ''
-            
             return f'''
             <div class="note" style="background: {background};">
-                <div class="note-content" style="color: {color};">
+                <div class="note-content" style="color: {color}; font-family: {font_family}; font-size: {font_size}; text-decoration: {'underline' if underline else 'none'};">
                     "{text}"
                     {author_html}
                 </div>
@@ -2433,19 +2522,34 @@ class HTMLGenerator:
             '''
         
         elif element_type == "video":
+            embed_code = element.get("embed_code", "")
             video_id = element.get("video_id", "")
+            # 如果用户提供了 embed_code，直接使用（保持不改动）
+            if embed_code:
+                return embed_code
+
+            # 如果只有 video_id，生成更健壮的 iframe，增加 allow、referrerpolicy、loading 等属性
             if video_id:
+                player_src = f"https://player.bilibili.com/player.html?bvid={video_id}&page=1"
+                fallback_url = f"https://www.bilibili.com/video/{video_id}"
                 return f'''
-                <div class="video-container">
-                    <iframe src="https://player.bilibili.com/player.html?bvid={video_id}&page=1"
-                            scrolling="no" border="0" frameborder="no" framespacing="0"
-                            allowfullscreen="true"
+                <div class="video-container" aria-label="B站视频">
+                    <iframe src="{player_src}"
+                            loading="lazy"
+                            scrolling="no"
+                            frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+                            allowfullscreen
+                            referrerpolicy="no-referrer-when-downgrade"
                             title="B站视频播放器">
                     </iframe>
+                    <noscript style="display:block; margin-top:8px; color:var(--text-color); opacity:0.8;">
+                        如果视频无法播放，请<a href="{fallback_url}" target="_blank" rel="noopener noreferrer">在B站打开</a>。
+                    </noscript>
                 </div>
                 '''
             else:
-                return '<p style="color: var(--text-color); opacity: 0.5; font-style: italic;">[视频ID未设置]</p>'
+                return '<p style="color: var(--text-color); opacity: 0.5; font-style: italic;">[视频未设置]</p>'
         
         elif element_type == "image":
             src = element.get("src", "")
@@ -3160,7 +3264,12 @@ class ContentElement:
                 "level": kwargs.get("level", 2),
                 "color": kwargs.get("color", "#007acc"),
                 "align": kwargs.get("align", "left"),
-                "animation": kwargs.get("animation", "none")
+                "animation": kwargs.get("animation", "none"),
+                "font_family": kwargs.get("font_family", "Inter, 'Microsoft YaHei', sans-serif"),
+                "font_size": kwargs.get("font_size", "2rem"),
+                "bold": kwargs.get("bold", True),
+                "underline": kwargs.get("underline", False),
+                "strike": kwargs.get("strike", False)
             })
         elif element_type == "paragraph":
             element.update({
@@ -3169,7 +3278,11 @@ class ContentElement:
                 "background": kwargs.get("background", "#ffffff"),
                 "align": kwargs.get("align", "left"),
                 "font_size": kwargs.get("font_size", "1rem"),
-                "line_height": kwargs.get("line_height", "1.7")
+                "line_height": kwargs.get("line_height", "1.7"),
+                "font_family": kwargs.get("font_family", "Inter, 'Microsoft YaHei', sans-serif"),
+                "bold": kwargs.get("bold", False),
+                "underline": kwargs.get("underline", False),
+                "strike": kwargs.get("strike", False)
             })
         elif element_type == "note":
             element.update({
@@ -3177,7 +3290,11 @@ class ContentElement:
                 "author": kwargs.get("author", ""),
                 "color": kwargs.get("color", "#007acc"),
                 "background": kwargs.get("background", "#f8f9fa"),
-                "show_quotes": kwargs.get("show_quotes", True)
+                "show_quotes": kwargs.get("show_quotes", True),
+                "font_family": kwargs.get("font_family", "Inter, 'Microsoft YaHei', sans-serif"),
+                "font_size": kwargs.get("font_size", "1rem"),
+                "bold": kwargs.get("bold", False),
+                "underline": kwargs.get("underline", False)
             })
         elif element_type == "button":
             element.update({
@@ -3192,6 +3309,7 @@ class ContentElement:
         elif element_type == "video":
             element.update({
                 "video_id": kwargs.get("video_id", ""),
+                "embed_code": kwargs.get("embed_code", ""),
                 "title": kwargs.get("title", "B站视频"),
                 "width": kwargs.get("width", "100%"),
                 "height": kwargs.get("height", "500px"),
@@ -3342,10 +3460,10 @@ def render_page_tree_item(page, depth=0):
                 if idx > 0:
                     structure["pages"][idx], structure["pages"][idx-1] = structure["pages"][idx-1], structure["pages"][idx]
                     save_project()
-                    st.session_state.current_page = structure["pages"][idx-1]
-                    st.experimental_rerun()
-
-        if st.button("⬇️", key=f"move_down_{page['id']}", help="下移页面"):
+                    st.session_state.current_page = structure["pages"][idx+1]
+                    save_project()
+                    st.session_state.current_page = structure["pages"][idx+1]
+                    safe_rerun()
             structure = st.session_state.project_structure
             if "pages" in structure:
                 idx = next((i for i, p in enumerate(structure["pages"]) if p["id"] == page["id"]), -1)
@@ -3353,7 +3471,7 @@ def render_page_tree_item(page, depth=0):
                     structure["pages"][idx], structure["pages"][idx+1] = structure["pages"][idx+1], structure["pages"][idx]
                     save_project()
                     st.session_state.current_page = structure["pages"][idx+1]
-                    st.experimental_rerun()
+                    safe_rerun()
 
     with col4:
         if st.button("🗑️", 
@@ -3377,7 +3495,7 @@ def select_page(page):
     st.session_state.edit_mode = False
     st.session_state.edit_element_id = None
     st.session_state.edit_page_title = False
-    st.rerun()
+    safe_rerun()
 
 def add_new_page(page_type):
     """添加新页面"""
@@ -3424,43 +3542,61 @@ def delete_page(page_id):
             return None
 
         pending_key = f"pending_delete_page_{page_id}"
+        title = None
+        # 尝试在扁平 pages 中查找标题，若有嵌套则在所有页面中查找
+        def find_title(pages_list, pid):
+            for p in pages_list:
+                if p.get('id') == pid:
+                    return p.get('title')
+                if 'children' in p and p['children']:
+                    t = find_title(p['children'], pid)
+                    if t:
+                        return t
+            return None
+
+        title = find_title(structure.get('pages', []), page_id) or page_id
+
         if st.session_state.get(pending_key):
-            # 展示确认
-            title = next((p.get('title') for p in structure.get('pages', []) if p.get('id') == page_id), '')
-            st.warning(f"⚠️ 确认删除页面 '{title or page_id}'? 此操作不可撤销。")
+            # 严格删除确认：要求输入完整页面标题
+            st.warning(f"⚠️ 将永久删除页面: '{title}'. 此操作不可撤销。\n请输入完整页面标题以确认删除。")
+            user_input = st.text_input("输入页面标题以确认删除", value="", key=f"confirm_input_{page_id}")
             colc, coly = st.columns([1,1])
             with colc:
                 if st.button("取消", key=f"cancel_delete_page_{page_id}"):
                     st.session_state[pending_key] = False
-                    st.experimental_rerun()
+                    safe_rerun()
             with coly:
-                if st.button("🗑️ 确认删除", key=f"confirm_delete_page_{page_id}"):
-                    deleted_page = remove_page_by_id(structure.get('pages', []), page_id)
-                    if deleted_page:
-                        # 如果删除的是当前页面，切换到封面页
-                        if st.session_state.current_page and st.session_state.current_page.get("id") == page_id:
-                            st.session_state.current_page = structure["cover_page"]
-
-                        if save_project():
-                            st.session_state[pending_key] = False
-                            SessionStateManager.add_notification("页面已删除", "success")
-                            st.experimental_rerun()
-                        else:
-                            SessionStateManager.add_notification("删除失败", "error")
-                    else:
-                        SessionStateManager.add_notification("未找到要删除的页面", "warning")
+                confirm_enabled = (user_input.strip() == (title or '').strip() and user_input.strip() != "")
+                if st.button("🗑️ 确认删除", key=f"confirm_delete_page_{page_id}", disabled=not confirm_enabled):
+                    if not confirm_enabled:
+                        SessionStateManager.add_notification("输入不匹配，删除已取消", "warning")
                         st.session_state[pending_key] = False
-                        st.experimental_rerun()
+                        safe_rerun()
+                    else:
+                        deleted_page = remove_page_by_id(structure.get('pages', []), page_id)
+                        if deleted_page:
+                            if st.session_state.current_page and st.session_state.current_page.get("id") == page_id:
+                                st.session_state.current_page = structure["cover_page"]
+                            if save_project():
+                                st.session_state[pending_key] = False
+                                SessionStateManager.add_notification("页面已删除", "success")
+                                safe_rerun()
+                            else:
+                                SessionStateManager.add_notification("删除失败", "error")
+                        else:
+                            SessionStateManager.add_notification("未找到要删除的页面", "warning")
+                            st.session_state[pending_key] = False
+                            safe_rerun()
         else:
             if st.button("🗑️ 确认删除此页面", key=f"del_btn_page_{page_id}"):
                 st.session_state[pending_key] = True
-                st.experimental_rerun()
+                safe_rerun()
 
 def edit_page_title(page_id):
     """编辑页面标题"""
     st.session_state.edit_page_title = True
     st.session_state.edit_page_id = page_id
-    st.rerun()
+    safe_rerun()
 
 def add_content_element(element_type):
     """添加内容元素"""
@@ -3478,7 +3614,7 @@ def add_content_element(element_type):
         st.session_state.edit_mode = True
         st.session_state.edit_element_id = new_element["id"]
         SessionStateManager.add_notification(f"已添加{ContentElement.get_element_name(element_type)}", "success")
-        st.rerun()
+        safe_rerun()
     else:
         SessionStateManager.add_notification("添加失败", "error")
 
@@ -3500,12 +3636,12 @@ def render_page_editor(page, structure):
                     st.session_state.edit_page_title = False
                     if save_project():
                         SessionStateManager.add_notification("标题已保存", "success")
-                    st.rerun()
+                    safe_rerun()
             
             with col_cancel:
                 if st.form_submit_button("❌ 取消", use_container_width=True):
                     st.session_state.edit_page_title = False
-                    st.rerun()
+                    safe_rerun()
     else:
         # 显示页面标题和编辑按钮
         col_title, col_edit = st.columns([4, 1])
@@ -3519,7 +3655,7 @@ def render_page_editor(page, structure):
                         help="编辑页面标题"):
                 st.session_state.edit_page_title = True
                 st.session_state.edit_page_id = page["id"]
-                st.rerun()
+                safe_rerun()
     
     # 页面属性
     with st.expander("⚙️ 页面属性", expanded=False):
@@ -3555,7 +3691,7 @@ def render_page_editor(page, structure):
             page["type"] = page_type
             if save_project():
                 SessionStateManager.add_notification("页面属性已更新", "success")
-                st.rerun()
+                safe_rerun()
     
     # 内容编辑工具栏
     st.markdown("---")
@@ -3602,7 +3738,7 @@ def render_content_element(element, page, index):
     element_id = element["id"]
     
     with st.container():
-        st.markdown('<div class="content-element">', unsafe_allow_html=True)
+        st.markdown(f'<div id="elem-{element_id}" class="content-element">', unsafe_allow_html=True)
         
         # 元素头部
         col_header1, col_header2 = st.columns([5, 1])
@@ -3621,25 +3757,27 @@ def render_content_element(element, page, index):
                     if index > 0:
                         page["content"][index], page["content"][index-1] = page["content"][index-1], page["content"][index]
                         if save_project():
-                            st.rerun()
+                            safe_rerun()
             
             with col_ops2:
                 if st.button("✏️", key=f"edit_{element_id}", help="编辑"):
                         st.session_state.edit_mode = True
                         st.session_state.edit_element_id = element_id
+                        st.session_state['_scroll_to_element'] = element_id
+                        safe_rerun()
             
             with col_ops3:
                 if st.button("⬇️", key=f"down_{element_id}", help="下移"):
                     if index < len(page["content"]) - 1:
                         page["content"][index], page["content"][index+1] = page["content"][index+1], page["content"][index]
                         if save_project():
-                            st.rerun()
+                            safe_rerun()
             
             with col_ops4:
                 if st.button("🗑️", key=f"del_{element_id}", help="删除"):
                     # 标记为待删除（在下一次渲染显示确认按钮）
                     st.session_state[f"pending_delete_{element_id}"] = True
-                    st.rerun()
+                    safe_rerun()
 
             # 如果处于待删除状态，显示确认/取消按钮
             if st.session_state.get(f"pending_delete_{element_id}"):
@@ -3648,7 +3786,7 @@ def render_content_element(element, page, index):
                 with ccol:
                     if st.button("取消", key=f"cancel_del_{element_id}"):
                         st.session_state[f"pending_delete_{element_id}"] = False
-                        st.rerun()
+                        safe_rerun()
                 with ycol:
                     if st.button("删除", key=f"confirm_del_{element_id}"):
                         # 实际删除元素
@@ -3659,7 +3797,7 @@ def render_content_element(element, page, index):
                         if save_project():
                             st.session_state[f"pending_delete_{element_id}"] = False
                             SessionStateManager.add_notification(f"{name}已删除", "success")
-                            st.rerun()
+                            safe_rerun()
                         else:
                             st.session_state[f"pending_delete_{element_id}"] = False
                             SessionStateManager.add_notification("删除失败", "error")
@@ -3723,36 +3861,57 @@ def render_element_editor(element, page, index):
                 element["level"] = st.selectbox("标题级别", [1, 2, 3, 4], 
                                               index=min(element.get("level", 2)-1, 3))
             
-            col_color, col_align = st.columns(2)
-            with col_color:
+            col_left, col_right = st.columns(2)
+            with col_left:
                 element["color"] = st.color_picker("文字颜色", value=element.get("color", "#2d3748"))
-            with col_align:
+                element["font_family"] = st.selectbox("字体", ["Inter, 'Microsoft YaHei', sans-serif", "Arial, sans-serif", "'Noto Sans SC', 'Microsoft YaHei', sans-serif"], index=0 if element.get("font_family","Inter, 'Microsoft YaHei', sans-serif") == "Inter, 'Microsoft YaHei', sans-serif" else 1)
+                element["font_size"] = st.selectbox("字号", ["2.8rem","2.4rem","2rem","1.6rem"], index=0 if element.get("font_size","2rem")=="2.8rem" else (1 if element.get("font_size","2rem")=="2.4rem" else (2 if element.get("font_size","2rem")=="2rem" else 3)))
+            with col_right:
                 element["align"] = st.selectbox("对齐方式", ["left", "center", "right"],
                                               index=["left", "center", "right"].index(
                                                   element.get("align", "left")))
+                # 样式开关
+                element["bold"] = st.checkbox("加粗", value=element.get("bold", True))
+                element["underline"] = st.checkbox("下划线", value=element.get("underline", False))
+                element["strike"] = st.checkbox("删除线", value=element.get("strike", False))
         
         elif element_type == "paragraph":
-            element["text"] = st.text_area("内容", value=element.get("text", ""), height=150)
-            
-            col_color, col_bg = st.columns(2)
-            with col_color:
+            # 自适应高度：根据换行数估算高度
+            def estimate_height(text):
+                lines = text.count('\n') + 1
+                est = min(max(120, lines * 28), 1200)
+                return est
+
+            element["text"] = st.text_area("内容", value=element.get("text", ""), height=estimate_height(element.get("text", "")))
+            col_left, col_right = st.columns(2)
+            with col_left:
                 element["color"] = st.color_picker("文字颜色", value=element.get("color", "#4a5568"))
-            with col_bg:
+                element["font_family"] = st.selectbox("字体", ["Inter, 'Microsoft YaHei', sans-serif", "Arial, sans-serif", "'Noto Sans SC', 'Microsoft YaHei', sans-serif"], index=0 if element.get("font_family","Inter, 'Microsoft YaHei', sans-serif") == "Inter, 'Microsoft YaHei', sans-serif" else 1)
+                element["font_size"] = st.selectbox("字号", ["1.25rem","1rem","0.9rem","0.8rem"], index=0 if element.get("font_size","1rem")=="1.25rem" else (1 if element.get("font_size","1rem")=="1rem" else (2 if element.get("font_size","1rem")=="0.9rem" else 3)))
+            with col_right:
                 element["background"] = st.color_picker("背景颜色", value=element.get("background", "#ffffff"))
-            
-            element["align"] = st.selectbox("对齐方式", ["left", "center", "right", "justify"],
+                element["align"] = st.selectbox("对齐方式", ["left", "center", "right", "justify"],
                                           index=["left", "center", "right", "justify"].index(
                                               element.get("align", "left")))
+                # 样式
+                style_col1, style_col2 = st.columns(2)
+                with style_col1:
+                    element["bold"] = st.checkbox("加粗", value=element.get("bold", False))
+                    element["underline"] = st.checkbox("下划线", value=element.get("underline", False))
+                with style_col2:
+                    element["strike"] = st.checkbox("删除线", value=element.get("strike", False))
         
         elif element_type == "note":
             element["text"] = st.text_area("注释内容", value=element.get("text", ""), height=120)
             element["author"] = st.text_input("吐槽者", value=element.get("author", ""))
-            
-            col_color, col_bg = st.columns(2)
-            with col_color:
+            col_left, col_right = st.columns(2)
+            with col_left:
                 element["color"] = st.color_picker("文字颜色", value=element.get("color", "#666666"))
-            with col_bg:
+                element["font_family"] = st.selectbox("字体", ["Inter, 'Microsoft YaHei', sans-serif", "Arial, sans-serif", "'Noto Sans SC', 'Microsoft YaHei', sans-serif"], index=0)
+            with col_right:
                 element["background"] = st.color_picker("背景颜色", value=element.get("background", "#f8f9fa"))
+                element["font_size"] = st.selectbox("字号", ["1.1rem","1rem","0.9rem"], index=0 if element.get("font_size","1rem")=="1.1rem" else (1 if element.get("font_size","1rem")=="1rem" else 2))
+                element["underline"] = st.checkbox("下划线", value=element.get("underline", False))
         
         elif element_type == "image":
             element["src"] = st.text_input("图片文件名（仅文件名或相对/绝对URL）", value=element.get("src", ""), help="示例: mypic.jpg 或 https://.../img.png")
@@ -3785,6 +3944,7 @@ def render_element_editor(element, page, index):
         elif element_type == "video":
             element["video_id"] = st.text_input("B站视频ID (BV号)", value=element.get("video_id", ""),
                                               help="例如：BV1xx411c7mD")
+            element["embed_code"] = st.text_area("B站嵌入代码 (可选)", value=element.get("embed_code", ""), help="如果填入完整的 iframe 嵌入代码，将直接使用该代码进行嵌入")
             element["title"] = st.text_input("视频标题", value=element.get("title", "B站视频"))
             
             col_width, col_height = st.columns(2)
@@ -3801,13 +3961,13 @@ def render_element_editor(element, page, index):
                 st.session_state.edit_element_id = None
                 if save_project():
                     SessionStateManager.add_notification("修改已保存", "success")
-                st.rerun()
+                safe_rerun()
         
         with col_cancel:
             if st.button("❌ 取消", use_container_width=True, key=f"cancel_{element['id']}"):
                 st.session_state.edit_mode = False
                 st.session_state.edit_element_id = None
-                st.rerun()
+                safe_rerun()
         
         st.markdown('</div>', unsafe_allow_html=True)
 
@@ -3823,7 +3983,14 @@ def render_preview(page):
             level = element.get("level", 2)
             text = element.get("text", "")
             color = element.get("color", "#2d3748")
-            st.markdown(f"<h{level} style='color: {color}; margin: 15px 0;'>{text}</h{level}>", 
+            font_family = element.get("font_family", "Inter, 'Microsoft YaHei', sans-serif")
+            font_size = element.get("font_size", "2rem")
+            bold = element.get("bold", True)
+            underline = element.get("underline", False)
+            strike = element.get("strike", False)
+            weight = '700' if bold else '400'
+            text_decoration = 'line-through' if strike else ('underline' if underline else 'none')
+            st.markdown(f"<h{level} style='color: {color}; margin: 15px 0; font-family: {font_family}; font-size: {font_size}; font-weight: {weight}; text-decoration: {text_decoration};'>{text}</h{level}>", 
                       unsafe_allow_html=True)
         
         elif element["type"] == "paragraph":
@@ -3831,10 +3998,15 @@ def render_preview(page):
             color = element.get("color", "#4a5568")
             background = element.get("background", "#ffffff")
             align = element.get("align", "left")
-            
+            font_family = element.get('font_family', "Inter, 'Microsoft YaHei', sans-serif")
+            font_size = element.get('font_size', '1rem')
+            bold = element.get('bold', False)
+            underline = element.get('underline', False)
+            strike = element.get('strike', False)
             text_with_breaks = text.replace('\n', '<br>')
+            style_dec = f"font-family: {font_family}; font-size: {font_size}; font-weight: {'700' if bold else '400'}; text-decoration: {'line-through' if strike else ('underline' if underline else 'none')};"
             st.markdown(f"""
-            <div style="color: {color}; background: {background}; padding: 20px; border-radius: 12px; margin: 15px 0; text-align: {align}; line-height: 1.7; border-left: 4px solid #667eea;">
+            <div style="color: {color}; background: {background}; padding: 20px; border-radius: 12px; margin: 15px 0; text-align: {align}; line-height: 1.7; border-left: 4px solid #667eea; {style_dec}">
                 {text_with_breaks}
             </div>
             """, unsafe_allow_html=True)
@@ -3844,11 +4016,12 @@ def render_preview(page):
             author = element.get("author", "")
             color = element.get("color", "#666666")
             background = element.get("background", "#f8f9fa")
-            
+            font_family = element.get('font_family', "Inter, 'Microsoft YaHei', sans-serif")
+            font_size = element.get('font_size', '1rem')
+            underline = element.get('underline', False)
             author_html = f'<div style="text-align: right; color: #888; margin-top: 10px; font-style: italic;">— {author}</div>' if author else ''
-            
             st.markdown(f"""
-            <div style="background: {background}; color: {color}; padding: 20px; border-radius: 12px; margin: 20px 0; border-left: 4px solid #667eea; font-style: italic; box-shadow: 0 5px 20px rgba(0,0,0,0.05);">
+            <div style="background: {background}; color: {color}; padding: 20px; border-radius: 12px; margin: 20px 0; border-left: 4px solid #667eea; font-style: italic; box-shadow: 0 5px 20px rgba(0,0,0,0.05); font-family: {font_family}; font-size: {font_size}; text-decoration: {'underline' if underline else 'none'};">
                 <div style="font-size: 1.1em; margin-bottom: 10px;">"{text}"</div>
                 {author_html}
             </div>
@@ -3872,7 +4045,11 @@ def render_preview(page):
             video_id = element.get("video_id", "")
             title = element.get("title", "B站视频")
             
-            if video_id:
+            embed_code = element.get("embed_code", "")
+            if embed_code:
+                # 直接使用用户提供的 iframe 代码
+                st.markdown(embed_code, unsafe_allow_html=True)
+            elif video_id:
                 st.markdown(f"""
                 <div style="margin: 20px 0;">
                     <h4 style="color: #2d3748; margin-bottom: 10px;">{title}</h4>
@@ -4070,7 +4247,7 @@ def reload_project():
         st.session_state.project_structure = result["structure"]
         st.session_state.current_page = result["structure"]["cover_page"]
         SessionStateManager.add_notification("项目已重新加载", "success")
-        st.rerun()
+        safe_rerun()
     else:
         SessionStateManager.add_notification(f"重新加载失败: {result}", "error")
 
@@ -4094,14 +4271,14 @@ def delete_project_confirm():
                 st.session_state.active_tab = "home"
                 st.session_state.current_project = None
                 time.sleep(1)
-                st.rerun()
+                safe_rerun()
             else:
                 st.error(message)
                 SessionStateManager.add_notification(f"删除失败: {message}", "error")
     
     with col_cancel:
         if st.button("❌ 取消", use_container_width=True):
-            st.rerun()
+            safe_rerun()
 
 # ============================================
 # 主页
@@ -4191,7 +4368,7 @@ def render_home():
                     )
                 with col_clear:
                     if st.form_submit_button("🗑️ 清空", use_container_width=True, type="secondary"):
-                        st.rerun()
+                        safe_rerun()
                 
                 if submitted:
                     if project_name:
@@ -4210,7 +4387,7 @@ def render_home():
                                     st.session_state.current_page = result["structure"]["cover_page"]
                                     st.session_state.active_tab = "editor"
                                     st.session_state.project_loaded = True
-                                    st.rerun()
+                                    safe_rerun()
                             else:
                                 st.error(f"❌ {message}")
                                 SessionStateManager.add_notification(f"创建失败: {message}", "error")
@@ -4339,7 +4516,7 @@ def render_home():
                                 st.session_state.active_tab = "editor"
                                 st.session_state.project_loaded = True
                                 SessionStateManager.add_notification(f"已加载项目: {project_name}", "success")
-                                st.rerun()
+                                safe_rerun()
                             else:
                                 SessionStateManager.add_notification(f"加载失败: {result}", "error")
                     
@@ -4353,7 +4530,7 @@ def render_home():
                             confirm_key = f"confirm_delete_{project_name}"
                             if not st.session_state.get(confirm_key):
                                 st.session_state[confirm_key] = True
-                                st.rerun()
+                                safe_rerun()
     
     with tab3:
         st.markdown("### 📖 使用指南")
@@ -4436,7 +4613,7 @@ def render_project_editor():
         st.error("项目加载失败，请返回主页重新加载")
         if st.button("返回主页"):
             st.session_state.active_tab = "home"
-            st.rerun()
+            safe_rerun()
         return
     
     # 顶部工具栏
@@ -4537,6 +4714,30 @@ def render_project_editor():
         if current_page:
             # 页面编辑区
             render_page_editor(current_page, structure)
+
+    # 如果需要滚动到某个元素（由编辑操作触发），注入前端脚本执行平滑滚动
+    if st.session_state.get('_scroll_to_element'):
+        target = st.session_state.pop('_scroll_to_element')
+        js = f"""
+        <script>
+        (function(){{
+            var id = 'elem-{target}';
+            var el = document.getElementById(id);
+            if (el) {{
+                el.scrollIntoView({{behavior: 'smooth', block: 'center'}});
+            }} else {{
+                var tries = 0;
+                var t = setInterval(function(){{
+                    tries += 1;
+                    var e = document.getElementById(id);
+                    if (e) {{ e.scrollIntoView({{behavior: 'smooth', block: 'center'}}); clearInterval(t); }}
+                    if (tries > 10) clearInterval(t);
+                }}, 200);
+            }}
+        }})();
+        </script>
+        """
+        components.html(js, height=1)
     
     # 底部操作栏
     st.markdown("---")
@@ -4551,7 +4752,7 @@ def render_project_editor():
                 st.success("✅ 项目已保存并生成HTML文件！")
                 SessionStateManager.add_notification("项目已保存", "success")
                 time.sleep(1)
-                st.rerun()
+                safe_rerun()
     
     with col_bottom2:
         if st.button("📤 导出HTML", 
@@ -4572,7 +4773,7 @@ def render_project_editor():
                 st.session_state.current_page = result["structure"]["cover_page"]
                 st.success("✅ 项目已重新加载")
                 SessionStateManager.add_notification("项目已重新加载", "success")
-                st.rerun()
+                safe_rerun()
     
     with col_bottom4:
         if st.button("🏠 返回主页", 
@@ -4581,7 +4782,7 @@ def render_project_editor():
                     help="返回主页"):
             st.session_state.active_tab = "home"
             st.session_state.current_project = None
-            st.rerun()
+            safe_rerun()
 
 # ============================================
 # 主应用入口
@@ -4589,6 +4790,57 @@ def render_project_editor():
 def main():
     # 加载CSS
     load_css()
+    # 注入全局脚本：在任何按钮点击前保存滚动位置，并在渲染时恢复，防止重跑导致页面跳顶
+    components.html("""
+    <script>
+    (function(){
+        // 保存滚动位置到 localStorage：使用 mousedown/touchstart 提前捕获（比 click 更早）
+        function saveScroll() {
+            try { localStorage.setItem('manual_creator_scroll', window.pageYOffset); } catch(e){}
+        }
+
+        document.addEventListener('mousedown', function(e){
+            var btn = e.target.closest('button');
+            if (btn) saveScroll();
+        }, true);
+
+        document.addEventListener('touchstart', function(e){
+            var btn = e.target.closest('button');
+            if (btn) saveScroll();
+        }, true);
+
+        // 防止按钮获得焦点后触发浏览器自动滚动：在 focusin 后快速失焦
+        document.addEventListener('focusin', function(e){
+            try {
+                var t = e.target;
+                if (t && (t.tagName === 'BUTTON' || t.getAttribute && t.getAttribute('role') === 'button')) {
+                    setTimeout(function(){ try{ t.blur(); } catch(e){} }, 10);
+                }
+            } catch(e){}
+        }, true);
+
+        // 页面加载后尝试多次恢复滚动位置，兼容 Streamlit 重渲染
+        window.addEventListener('load', function(){
+            try{
+                var attempts = 0;
+                var y = localStorage.getItem('manual_creator_scroll');
+                if (y !== null) {
+                    var target = parseInt(y);
+                    var restore = setInterval(function(){
+                        window.scrollTo(0, target);
+                        attempts += 1;
+                        // 在恢复后清理并移除本地存储
+                        if (attempts > 6) {
+                            try { localStorage.removeItem('manual_creator_scroll'); } catch(e){}
+                            clearInterval(restore);
+                        }
+                    }, 120);
+                }
+            }catch(e){}
+        });
+    })();
+    </script>
+    """, height=1)
     
     # 初始化会话状态
     SessionStateManager.initialize()
@@ -4609,12 +4861,12 @@ def main():
         col_refresh, col_home = st.columns(2)
         with col_refresh:
             if st.button("🔄 刷新页面", use_container_width=True):
-                st.rerun()
+                safe_rerun()
         with col_home:
             if st.button("🏠 返回主页", use_container_width=True):
                 st.session_state.active_tab = "home"
                 st.session_state.current_project = None
-                st.rerun()
+                safe_rerun()
 
 if __name__ == "__main__":
     # 错误处理
